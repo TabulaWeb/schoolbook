@@ -8,7 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import data from '../../data/chapter.json';
+import data from '../../data/chapter1.json';
 
 const HomeScreen = ({navigation}) => {
   React.useLayoutEffect(() => {

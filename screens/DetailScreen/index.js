@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
-import data from '../../data/chapter.json';
+import data from '../../data/chapter1.json';
 
 const DetailScreen = ({route, navigation}) => {
   const {idChapter} = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: data[idChapter - 1].title,
+      title: data[idChapter].title,
       headerTitleAlign: 'center',
     });
   }, [idChapter, navigation]);
@@ -14,7 +14,7 @@ const DetailScreen = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        {data[idChapter - 1].detail.map(i => (
+        {data[idChapter].detail.map(i => (
           <Pressable
             style={styles.itembook}
             onPress={() =>

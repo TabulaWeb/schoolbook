@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet, Pressable, Image} from 'react-native';
-import data from '../../data/chapter.json';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
+import data from '../../data/chapter1.json';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import Svg, {Path} from 'react-native-svg';
 
@@ -100,9 +100,9 @@ const ArticleScreen = ({route, navigation}) => {
   return (
     <View style={[styles.container, styles.articleContainer]}>
       <Text style={styles.articleTitle}>
-        {data[chapterId - 1].detail[articleKey - 1].articleTitle}
+        {data[chapterId].detail[articleKey - 1].articleTitle}
       </Text>
-      {data[chapterId - 1].detail[articleKey - 1].contentText.map(i => (
+      {data[chapterId].detail[articleKey - 1].contentText.map(i => (
         <Text style={styles.articleText}>{i.text}</Text>
       ))}
     </View>
