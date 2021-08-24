@@ -4,6 +4,12 @@ import data from '../../data/chapter.json';
 
 const DetailScreen = ({route, navigation}) => {
   const {idChapter} = route.params;
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: data[idChapter - 1].title,
+      headerTitleAlign: 'center',
+    });
+  }, [idChapter, navigation]);
 
   return (
     <View style={styles.container}>
