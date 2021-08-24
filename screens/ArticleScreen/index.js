@@ -9,7 +9,7 @@ const ArticleScreen = ({route, navigation}) => {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: data[chapterId - 1].detail[articleKey - 1].articleTitle,
+      title: '',
       headerTitleAlign: 'center',
       headerRight: () => (
         <View style={styles.buttonContent}>
