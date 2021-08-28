@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
-import data from '../../data/chapter1.json';
+import {dataArticle} from '../../data/chapter1';
 
 const DetailScreen = ({route, navigation}) => {
   const {idChapter} = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: data[idChapter].title,
+      title: dataArticle[idChapter].title,
       headerTitleAlign: 'center',
     });
   }, [idChapter, navigation]);
@@ -14,18 +14,20 @@ const DetailScreen = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        {data[idChapter].detail.map(i => (
-          <Pressable
-            style={styles.itembook}
-            onPress={() =>
-              navigation.navigate('ArticleScreen', {
-                articleKey: i.key,
-                chapterId: idChapter,
-              })
-            }>
-            <Text style={styles.itembookNumber}>{i.number}</Text>
-            <Text style={styles.itembookTitle}>{i.articleTitle}</Text>
-          </Pressable>
+        {dataArticle[idChapter].detail.map(i => (
+          <View key={i.key}>
+            <Pressable
+              style={styles.itembook}
+              onPress={() =>
+                navigation.navigate('ArticleScreen', {
+                  articleKey: i.key,
+                  chapterId: idChapter,
+                })
+              }>
+              <Text style={styles.itembookNumber}>{i.number}</Text>
+              <Text style={styles.itembookTitle}>{i.articleTitle}</Text>
+            </Pressable>
+          </View>
         ))}
       </ScrollView>
     </View>

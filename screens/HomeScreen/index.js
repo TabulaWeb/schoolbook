@@ -8,7 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import data from '../../data/chapter1.json';
+import {dataArticle} from '../../data/chapter1';
 
 const HomeScreen = ({navigation}) => {
   React.useLayoutEffect(() => {
@@ -41,17 +41,19 @@ const HomeScreen = ({navigation}) => {
         <TextInput style={styles.searchInput} placeholder="Поиск" />
       </View>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        {data.map(i => (
-          <Pressable
-            style={styles.itembook}
-            onPress={() =>
-              navigation.navigate('DetailScreen', {
-                idChapter: i.id,
-              })
-            }>
-            <Text style={styles.itembookNumber}>{i.id}</Text>
-            <Text style={styles.itembookTitle}>{i.title}</Text>
-          </Pressable>
+        {dataArticle.map(i => (
+          <View key={i.id}>
+            <Pressable
+              style={styles.itembook}
+              onPress={() =>
+                navigation.navigate('DetailScreen', {
+                  idChapter: i.id,
+                })
+              }>
+              <Text style={styles.itembookNumber}>{i.id}</Text>
+              <Text style={styles.itembookTitle}>{i.title}</Text>
+            </Pressable>
+          </View>
         ))}
       </ScrollView>
     </View>

@@ -1,11 +1,26 @@
-import React from 'react';
-import {View, Text, StyleSheet, Pressable} from 'react-native';
-import data from '../../data/chapter1.json';
+import React, {useState, useCallback} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  ScrollView,
+  Button,
+} from 'react-native';
+import Modal from 'react-native-modal';
+import {dataArticle} from '../../data/chapter1';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import Svg, {Path} from 'react-native-svg';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 const ArticleScreen = ({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = useCallback(() => {
+    setModalVisible(!isModalVisible);
+  });
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -13,7 +28,7 @@ const ArticleScreen = ({route, navigation}) => {
       headerTitleAlign: 'center',
       headerRight: () => (
         <View style={styles.buttonContent}>
-          <Pressable onPress={() => alert('Clicked!')}>
+          <Pressable onPress={() => toggleModal()}>
             <Svg
               width="22"
               height="22"
@@ -93,19 +108,45 @@ const ArticleScreen = ({route, navigation}) => {
         </View>
       ),
     });
-  }, [articleKey, chapterId, navigation]);
+  }, [articleKey, chapterId, navigation, toggleModal]);
+
+  const [sliderOneChanging, setSliderOneChanging] = React.useState(false);
+  const [sliderOneValue, setSliderOneValue] = React.useState([5]);
+  const sliderOneValuesChangeStart = () => setSliderOneChanging(true);
+  const sliderOneValuesChange = values => setSliderOneValue(values);
 
   DeviceBrightness.setBrightnessLevel(0.1);
 
   return (
-    <View style={[styles.container, styles.articleContainer]}>
+    <ScrollView style={[styles.container, styles.articleContainer]}>
       <Text style={styles.articleTitle}>
-        {data[chapterId].detail[articleKey - 1].articleTitle}
+        {dataArticle[chapterId].detail[articleKey - 1].articleTitle}
       </Text>
-      {data[chapterId].detail[articleKey - 1].contentText.map(i => (
-        <Text style={styles.articleText}>{i.text}</Text>
+      {dataArticle[chapterId].detail[articleKey - 1].contentText.map(i => (
+        <View
+          key={dataArticle[chapterId].detail[
+            articleKey - 1
+          ].contentText.indexOf(i)}>
+          <Text style={styles.articleText}>{i.text}</Text>
+          {i.img !== '' ? <Image source={i.img} /> : <Text />}
+        </View>
       ))}
-    </View>
+      <Modal
+        isVisible={isModalVisible}
+        backdropOpacity={0.3}
+        swipeDirection="down"
+        style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text>{sliderOneValue}</Text>
+          <MultiSlider
+            values={sliderOneValue}
+            onValuesChangeStart={sliderOneValuesChangeStart}
+            onValuesChange={sliderOneValuesChange}
+          />
+          <Button title="Hide modal" onPress={toggleModal} />
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 
@@ -116,8 +157,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   articleContainer: {
-    paddingHorizontal: 20,
     marginTop: 25,
+    paddingHorizontal: 20,
   },
   articleTitle: {
     fontSize: 18,
@@ -133,5 +174,12 @@ const styles = StyleSheet.create({
   },
   iconHeaderCenter: {
     paddingHorizontal: 20,
+  },
+  modalContainer: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
   },
 });
