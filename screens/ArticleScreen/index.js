@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   View,
   Text,
@@ -14,11 +14,20 @@ import {dataArticle} from '../../data/chapter1';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import Svg, {Path} from 'react-native-svg';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {save} from '../../store/global';
 
 const ArticleScreen = ({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLight, setModalVisibleLight] = useState(false);
+  const [checkSaveArticle, setCheckSaveArticle] = useState(null);
+
+  useEffect(() => {
+    if (save.savedSubArticle == articleKey && save.savedArticle == chapterId) {
+      setCheckSaveArticle(true);
+    }
+  }, [articleKey, chapterId, checkSaveArticle]);
 
   const toggleModal = useCallback(() => {
     setModalVisible(!isModalVisible);
@@ -100,23 +109,48 @@ const ArticleScreen = ({route, navigation}) => {
               />
             </Svg>
           </Pressable>
-          <Pressable onPress={() => alert('Clicked!')}>
-            <Svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <Path
-                d="M18.0983 0H3.90177C3.45726 0 3.09692 0.360379 3.09692 0.804848V21.1945C3.09692 21.9115 3.96627 22.2683 4.47085 21.7636L11.0001 15.2344L17.5293 21.7636C18.032 22.2665 18.9032 21.9157 18.9032 21.1945V0.804848C18.9032 0.360379 18.5428 0 18.0983 0ZM4.70662 1.6097H17.2935V3.31401H4.70662V1.6097ZM17.2934 19.2514L11.5692 13.5271C11.2549 13.2128 10.7453 13.2128 10.4309 13.5271L4.70662 19.2514V4.92371H17.2935V19.2514H17.2934Z"
-                fill="#020A0E"
-              />
-            </Svg>
+          <Pressable onPress={() => createSavedAeticle()}>
+            {checkSaveArticle ? (
+              <Svg
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <Path
+                  d="M18.0982 0H3.90177C3.45726 0 3.09692 0.360378 3.09692 0.804846V3.04571C3.09692 3.34206 3.33716 3.58226 3.63347 3.58226H18.3665C18.6629 3.58226 18.9031 3.34202 18.9031 3.04571V0.804846C18.9031 0.360378 18.5427 0 18.0982 0Z"
+                  fill="#020A0E"
+                />
+                <Path
+                  d="M18.3665 4.65527H3.63347C3.33712 4.65532 3.09692 4.89555 3.09692 5.19191V21.175C3.09692 21.9289 3.97293 22.2616 4.47085 21.7635L11 15.2343L17.5292 21.7634C18.0237 22.2582 18.9032 21.9348 18.9032 21.1734V5.19187C18.9031 4.89551 18.6629 4.65527 18.3665 4.65527Z"
+                  fill="#020A0E"
+                />
+              </Svg>
+            ) : (
+              <Svg
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <Path
+                  d="M18.0983 0H3.90177C3.45726 0 3.09692 0.360379 3.09692 0.804848V21.1945C3.09692 21.9115 3.96627 22.2683 4.47085 21.7636L11.0001 15.2344L17.5293 21.7636C18.032 22.2665 18.9032 21.9157 18.9032 21.1945V0.804848C18.9032 0.360379 18.5428 0 18.0983 0ZM4.70662 1.6097H17.2935V3.31401H4.70662V1.6097ZM17.2934 19.2514L11.5692 13.5271C11.2549 13.2128 10.7453 13.2128 10.4309 13.5271L4.70662 19.2514V4.92371H17.2935V19.2514H17.2934Z"
+                  fill="#020A0E"
+                />
+              </Svg>
+            )}
           </Pressable>
         </View>
       ),
     });
-  }, [articleKey, chapterId, navigation, toggleModal]);
+  }, [articleKey, chapterId, navigation, toggleModal, toggleModalLight]);
+
+  function createSavedAeticle() {
+    save.savedArticle = chapterId;
+    save.savedSubArticle = articleKey;
+
+    setCheckSaveArticle(true);
+  }
 
   // Slider text
   const [sliderOneChanging, setSliderOneChanging] = React.useState(false);

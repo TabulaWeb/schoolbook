@@ -6,9 +6,11 @@ import {
   StyleSheet,
   Pressable,
   TextInput,
+  Image,
 } from 'react-native';
-import Svg, {Path} from 'react-native-svg';
+import Svg, {Path, G} from 'react-native-svg';
 import {dataArticle} from '../../data/chapter1';
+import {save} from '../../store/global';
 
 const HomeScreen = ({navigation}) => {
   React.useLayoutEffect(() => {
@@ -35,12 +37,61 @@ const HomeScreen = ({navigation}) => {
     });
   }, [navigation]);
 
+  console.log(save);
+
   return (
     <View style={styles.container}>
       <View style={[styles.content, styles.searchContent]}>
         <TextInput style={styles.searchInput} placeholder="Поиск" />
       </View>
       <ScrollView style={[styles.content, styles.itemsbook]}>
+        {save.savedArticle != null && save.savedSubArticle != null ? (
+          <Pressable
+            style={styles.saveLinkContainer}
+            onPress={() =>
+              navigation.navigate('ArticleScreen', {
+                articleKey: save.savedSubArticle,
+                chapterId: save.savedArticle,
+              })
+            }>
+            <View style={styles.saveLinkButtonContent}>
+              <Svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <G opacity="0.3">
+                  <Path
+                    d="M16.453 0H3.54708C3.14298 0 2.8154 0.327617 2.8154 0.731678V2.76882C2.8154 3.03824 3.0338 3.2566 3.30317 3.2566H16.6969C16.9663 3.2566 17.1846 3.0382 17.1846 2.76882V0.731678C17.1847 0.327617 16.8571 0 16.453 0Z"
+                    fill="#020A0E"
+                  />
+                  <Path
+                    d="M16.6969 4.23218H3.30317C3.03376 4.23222 2.8154 4.45061 2.8154 4.72003V19.2501C2.8154 19.9355 3.61176 20.2379 4.06442 19.7851L10 13.8495L15.9356 19.785C16.3852 20.2348 17.1847 19.9408 17.1847 19.2486V4.71999C17.1847 4.45058 16.9663 4.23218 16.6969 4.23218Z"
+                    fill="#020A0E"
+                  />
+                </G>
+              </Svg>
+              <Text style={styles.saveLinkText}>Перейти к закладкам</Text>
+            </View>
+            <View>
+              <Svg
+                width="8"
+                height="14"
+                viewBox="0 0 8 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <Path
+                  opacity="0.3"
+                  d="M0.182228 0.186385C-0.0607287 0.434864 -0.0607702 0.83781 0.18227 1.08633L5.9645 6.99985L0.182228 12.9137C-0.0607288 13.1621 -0.0607704 13.5651 0.18227 13.8136C0.425268 14.0621 0.819218 14.0621 1.06222 13.8136L7.28444 7.4498C7.40113 7.33046 7.46667 7.16861 7.46667 6.99985C7.46667 6.83109 7.40108 6.66919 7.2844 6.5499L1.06218 0.186428C0.819218 -0.0621357 0.425227 -0.0621366 0.182228 0.186385Z"
+                  fill="#020A0E"
+                />
+              </Svg>
+            </View>
+          </Pressable>
+        ) : (
+          <Text />
+        )}
         {dataArticle.map(i => (
           <View key={i.id}>
             <Pressable
@@ -65,6 +116,15 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  saveLinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingRight: 20,
+    borderBottomColor: '#C2C2C2',
+    borderBottomWidth: 1,
+    paddingBottom: 15,
+    alignItems: 'center',
   },
   searchContent: {
     paddingHorizontal: 20,
@@ -102,5 +162,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#C2C2C2',
     paddingRight: 20,
+  },
+  saveLinkButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  saveLinkText: {
+    marginLeft: 14,
+    fontSize: 18,
+    color: '#c2c2c2',
   },
 });
