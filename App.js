@@ -6,6 +6,7 @@ import ArticleScreen from './screens/ArticleScreen';
 import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
 import BookmarkScreen from './screens/BookmarkScreen';
+import IntroScreen from './screens/IntroScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,13 @@ const App = () => {
             textAlign: 'center',
           },
         }}>
+        <Stack.Screen
+          name="IntroScreen"
+          component={IntroScreen}
+          options={{
+            headerShown: false
+          }}
+        />
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
