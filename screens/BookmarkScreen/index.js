@@ -1,9 +1,11 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {dataArticle} from '../../data/chapter1';
 import {save} from '../../store/global';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
 
 const BookmarkScreen = ({navigation}) => {
+  let [bookmarkContent, setBookmarkContent] = useState(save);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Закладки',
@@ -13,19 +15,25 @@ const BookmarkScreen = ({navigation}) => {
 
   useEffect(() => {
     const getBookmark = navigation.addListener('focus', async () => {
-      console.log(save);
+      if (save.length < 1) {
+        navigation.navigate('HomeScreen');
+      }
     });
     return getBookmark;
   }, [navigation]);
 
+  useEffect(() => {
+    const getSaveBookmark = navigation.addListener('focus', async () => {
+      await setBookmarkContent(save);
+      console.log(bookmarkContent);
+    });
+    return getSaveBookmark;
+  }, [bookmarkContent, navigation]);
+
   return (
     <ScrollView style={styles.container}>
-      {save.map(i => (
-        <View
-          style={styles.bookmarkContainer}
-          key={dataArticle[i.savedArticle].detail[
-            i.savedSubArticle - 1
-          ].contentText.indexOf(i)}>
+      {bookmarkContent.map(i => (
+        <View style={styles.bookmarkContainer} key={bookmarkContent.indexOf(i)}>
           <Pressable
             style={styles.itembook}
             onPress={() =>

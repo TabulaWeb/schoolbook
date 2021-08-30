@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -6,13 +6,14 @@ import {
   StyleSheet,
   Pressable,
   TextInput,
-  Image,
 } from 'react-native';
 import Svg, {Path, G} from 'react-native-svg';
 import {dataArticle} from '../../data/chapter1';
 import {save} from '../../store/global';
 
 const HomeScreen = ({navigation}) => {
+  const [checkBookmark, setCheckBookmark] = useState(false);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Биофизика',
@@ -37,13 +38,24 @@ const HomeScreen = ({navigation}) => {
     });
   }, [navigation]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      if (save.length >= 1) {
+        setCheckBookmark(true);
+      } else {
+        setCheckBookmark(false);
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <View style={[styles.content, styles.searchContent]}>
         <TextInput style={styles.searchInput} placeholder="Поиск" />
       </View>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        {save.length > 0 ? (
+        {checkBookmark ? (
           <Pressable
             style={styles.saveLinkContainer}
             onPress={() => navigation.navigate('BookmarkScreen')}>

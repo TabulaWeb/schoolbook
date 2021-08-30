@@ -24,9 +24,11 @@ const ArticleScreen = ({route, navigation}) => {
   const [checkSaveArticle, setCheckSaveArticle] = useState(null);
 
   useEffect(() => {
-    if (save.savedSubArticle == articleKey && save.savedArticle == chapterId) {
-      setCheckSaveArticle(true);
-    }
+    save.map(i => {
+      if (i.savedSubArticle == articleKey && i.savedArticle == chapterId) {
+        setCheckSaveArticle(true);
+      }
+    });
   }, [articleKey, chapterId, checkSaveArticle]);
 
   const toggleModal = useCallback(() => {
@@ -109,8 +111,8 @@ const ArticleScreen = ({route, navigation}) => {
               />
             </Svg>
           </Pressable>
-          <Pressable onPress={() => createSavedAeticle()}>
-            {checkSaveArticle ? (
+          {checkSaveArticle ? (
+            <Pressable onPress={() => removeSavedAeticle()}>
               <Svg
                 width="22"
                 height="22"
@@ -126,7 +128,9 @@ const ArticleScreen = ({route, navigation}) => {
                   fill="#020A0E"
                 />
               </Svg>
-            ) : (
+            </Pressable>
+          ) : (
+            <Pressable onPress={() => createSavedAeticle()}>
               <Svg
                 width="22"
                 height="22"
@@ -138,8 +142,8 @@ const ArticleScreen = ({route, navigation}) => {
                   fill="#020A0E"
                 />
               </Svg>
-            )}
-          </Pressable>
+            </Pressable>
+          )}
         </View>
       ),
     });
@@ -148,6 +152,14 @@ const ArticleScreen = ({route, navigation}) => {
   function createSavedAeticle() {
     save.push({savedArticle: chapterId, savedSubArticle: articleKey});
     setCheckSaveArticle(true);
+  }
+
+  function removeSavedAeticle() {
+    setCheckSaveArticle(false);
+    let itemsqwerty = save.findIndex(
+      i => i.savedSubArticle == articleKey && i.savedArticle == chapterId,
+    );
+    save.splice(itemsqwerty, 1);
   }
 
   // Slider text
