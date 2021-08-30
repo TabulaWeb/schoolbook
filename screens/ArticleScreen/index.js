@@ -146,9 +146,7 @@ const ArticleScreen = ({route, navigation}) => {
   }, [articleKey, chapterId, navigation, toggleModal, toggleModalLight]);
 
   function createSavedAeticle() {
-    save.savedArticle = chapterId;
-    save.savedSubArticle = articleKey;
-
+    save.push({savedArticle: chapterId, savedSubArticle: articleKey});
     setCheckSaveArticle(true);
   }
 

@@ -5,6 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ArticleScreen from './screens/ArticleScreen';
 import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
+import BookmarkScreen from './screens/BookmarkScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +58,19 @@ const App = () => {
         <Stack.Screen
           name="ArticleScreen"
           component={ArticleScreen}
+          options={{
+            title: 'Глава',
+            headerStyle: {
+              backgroundColor: '#EEF1F3',
+            },
+            headerTitleStyle: {
+              fontWeight: '500',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="BookmarkScreen"
+          component={BookmarkScreen}
           options={{
             title: 'Глава',
             headerStyle: {

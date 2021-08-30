@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -37,23 +37,16 @@ const HomeScreen = ({navigation}) => {
     });
   }, [navigation]);
 
-  console.log(save);
-
   return (
     <View style={styles.container}>
       <View style={[styles.content, styles.searchContent]}>
         <TextInput style={styles.searchInput} placeholder="Поиск" />
       </View>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        {save.savedArticle != null && save.savedSubArticle != null ? (
+        {save.length > 0 ? (
           <Pressable
             style={styles.saveLinkContainer}
-            onPress={() =>
-              navigation.navigate('ArticleScreen', {
-                articleKey: save.savedSubArticle,
-                chapterId: save.savedArticle,
-              })
-            }>
+            onPress={() => navigation.navigate('BookmarkScreen')}>
             <View style={styles.saveLinkButtonContent}>
               <Svg
                 width="20"

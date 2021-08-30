@@ -40,19 +40,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  searchContent: {
-    paddingHorizontal: 20,
-    paddingVertical: 13,
-    backgroundColor: '#EEF1F3',
-  },
-  searchInput: {
-    width: '100%',
-    fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 34,
-    borderRadius: 8,
-    backgroundColor: '#E7E9EB',
-  },
   itemsbook: {
     paddingLeft: 20,
   },
