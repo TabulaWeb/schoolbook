@@ -132,21 +132,23 @@ const ArticleScreen = ({route, navigation}) => {
       ))}
       {dataArticle[chapterId].detail.length == articleKey ? (
         <Pressable 
-          style={styles.buttonNext} 
+          style={styles.buttonNext}
           onPress={() => navigation.navigate('HomeScreen')}>
           <Text style={styles.buttonNextText}>Завершить</Text>
         </Pressable>
       ) : (
-        <Pressable 
-          style={styles.buttonNext} 
-          onPress={() => navigation.navigate('ArticleScreen', {
-            articleKey: articleKey + 1,
-            chapterId: chapterId,
-          })}>
+        <Pressable
+          style={styles.buttonNext}
+          onPress={() =>
+            navigation.navigate('ArticleScreen', {
+              articleKey: articleKey + 1,
+              chapterId: chapterId,
+            })
+          }>
           <Text style={styles.buttonNextText}>Далее</Text>
         </Pressable>
       )}
-      
+
       <Modal
         isVisible={isModalVisible}
         backdropOpacity={0.3}

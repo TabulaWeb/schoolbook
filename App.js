@@ -1,12 +1,12 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {introScreen} from './store/global';
 
 import ArticleScreen from './screens/ArticleScreen';
 import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
 import BookmarkScreen from './screens/BookmarkScreen';
-import IntroScreen from './screens/IntroScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,29 +27,32 @@ const App = () => {
             textAlign: 'center',
           },
         }}>
-        <Stack.Screen
-          name="IntroScreen"
-          component={IntroScreen}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{
-            title: 'Биофизика',
-            headerStyle: {
-              backgroundColor: '#F3F5F5',
-              elevation: 0,
-              shadowOpacity: 0,
-              borderBottomWidth: 0,
-            },
-            headerTitleStyle: {
-              fontWeight: '500',
-            },
-          }}
-        />
+        {introScreen.showIntro ? (
+          <Stack.Screen
+            name="HomeScreen"
+            component={HomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+        ) : (
+          <Stack.Screen
+            name="HomeScreen"
+            component={HomeScreen}
+            options={{
+              title: 'Биофизика',
+              headerStyle: {
+                backgroundColor: '#F3F5F5',
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+        )}
         <Stack.Screen
           name="DetailScreen"
           component={DetailScreen}
