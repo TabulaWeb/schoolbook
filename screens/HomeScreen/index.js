@@ -28,39 +28,39 @@ const slides = [
   {
     index: 2,
     title: 'Биофизика',
-    text: 'Приложение будет интересно студентам, аспирантам – всем, кто интересуется современным состоянием биологической и медицинской физики.',
-    image: require('../../assets/atom.png'),
+    text: 'Учебное пособие «Биофизика. Физика для медицинских специальностей» с функцией поиска по главам.',
+    image: require('../../assets/IntroTwo.png'),
     backgroundColor: '#EFF2F3',
   },
   {
     index: 3,
     title: 'Биофизика',
-    text: 'Учебное пособие «Биофизика. Физика для медицинских специальностей» с функцией поиска по главам.',
-    image: require('../../assets/atom.png'),
+    text: 'Практикум по физике для студентов-медиков, который состоит из вопросов и задач по основным темам курса.',
+    image: require('../../assets/IntroThree.png'),
     backgroundColor: '#EFF2F3',
   },
 ];
 
 const renderNextButton = () => {
   return (
-    <View style={styles.nextButton}>
-      <Text style={styles.text}>Next</Text>
+    <View style={styles.NextButton}>
+      <Text style={styles.textNextButton}>Далее</Text>
     </View>
   );
 };
 
 const renderDoneButton = () => {
   return (
-    <View style={styles.nextButton}>
-      <Text style={styles.text}>Done</Text>
+    <View style={styles.DoneButton}>
+      <Text style={styles.textDoneButton}>Закрыть</Text>
     </View>
   );
 };
 
 const renderSkipButton = () => {
   return (
-    <View>
-      <Text style={styles.text}>Skip</Text>
+    <View style={styles.SkipButton}>
+      <Text style={styles.textSkipButton}>Пропустить</Text>
     </View>
   );
 };
@@ -108,12 +108,12 @@ const HomeScreen = ({navigation}) => {
           renderDoneButton={renderDoneButton}
           renderSkipButton={renderSkipButton}
           navContainerMaxSizePercent={0.3}
-          // navigationBarHeight={150}
+          navigationBarHeight={200}
           fixDotBackgroundColor={'#93B8CC'}
           animatedDotBackgroundColor={'#387EA6'}
           statusBar={true}
           statusBarColor={'#387EA6'}
-          columnButtonStyle={false}
+          columnButtonStyle={true}
           data={slides}
           onDone={closeIntro}
           onSkip={closeIntro}
@@ -169,6 +169,34 @@ const styles = StyleSheet.create({
   textSlider: {
     color: '#000',
   },
+  NextButton: {
+    paddingVertical: 13,
+    backgroundColor: '#387EA6',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 11,
+  },
+  textNextButton: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    borderRadius: 20,
+  },
+  DoneButton: {
+    paddingVertical: 13,
+    backgroundColor: '#387EA6',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 11,
+  },
+  textDoneButton: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    borderRadius: 20,
+  },
   saveLinkContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -214,6 +242,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#C2C2C2',
     paddingRight: 20,
+  },
+  textSkipButton: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#387EA6',
   },
   // saveLinkButtonContent: {
   //   flexDirection: 'row',
