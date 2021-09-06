@@ -9,6 +9,7 @@ import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
 import BookmarkScreen from './screens/BookmarkScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GlobalStore from './store/global';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,8 @@ const App = () => {
     userName: null,
     userToken: null,
   };
+
+  console.log(GlobalStore.showIntro);
 
   const loginReducer = (prevState, action) => {
     switch (action.type) {
@@ -129,32 +132,22 @@ const App = () => {
             textAlign: 'center',
           },
         }}>
-        {introScreen.showIntro ? (
-          <Stack.Screen
-            name="HomeScreen"
-            component={HomeScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-        ) : (
-          <Stack.Screen
-            name="HomeScreen"
-            component={HomeScreen}
-            options={{
-              title: 'Биофизика',
-              headerStyle: {
-                backgroundColor: '#F3F5F5',
-                elevation: 0,
-                shadowOpacity: 0,
-                borderBottomWidth: 0,
-              },
-              headerTitleStyle: {
-                fontWeight: '500',
-              },
-            }}
-          />
-        )}
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{
+            title: 'Биофизика',
+            headerStyle: {
+              backgroundColor: '#F3F5F5',
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+            },
+            headerTitleStyle: {
+              fontWeight: '500',
+            },
+          }}
+        />
         <Stack.Screen
           name="DetailScreen"
           component={DetailScreen}

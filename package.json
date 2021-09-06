@@ -19,6 +19,7 @@
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",
     "mobx-react-devtools": "^6.1.1",
+    "mobx-react-lite": "^3.2.1",
     "react": "17.0.2",
     "react-native": "0.65.1",
     "react-native-app-intro-slider": "^4.0.4",

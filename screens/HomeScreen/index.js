@@ -5,23 +5,21 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  Image,
   TextInput,
-  StatusBar,
-  SafeAreaView,
 } from 'react-native';
 import {dataArticle} from '../../data/chapter1';
-import {save} from '../../store/global';
 import {SvgXml} from 'react-native-svg';
 import {svgFlash, svgArrow, svgBookmark} from '../../components/svgImage';
 import {introScreen} from '../../store/global';
+import GlobalStore from '../../store/global';
 import SliderIntro from 'react-native-slider-intro';
+import {observer} from 'mobx-react';
 
 const slides = [
   {
     index: 1,
     title: 'Биофизика',
-    text: 'Интерактивное образовательное приложение предназначено для студентов медицинских, биологических и фармацевтических специальностей.',
+    text: 'Интерактивное образовательное приложение предназначено для студентов медицинских, биологических и фармацевтических специальностей. Приложение будет интересно студентам, аспирантам – всем, кто интересуется современным состоянием биологической и медицинской физики.',
     image: require('../../assets/atom.png'),
     backgroundColor: '#EFF2F3',
   },
@@ -66,32 +64,49 @@ const renderSkipButton = () => {
 };
 
 function closeIntro() {
-  introScreen.showIntro = false;
-  console.log(introScreen.showIntro);
+  GlobalStore.setSgowIntro(false);
 }
 
 console.log(introScreen.showIntro);
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = observer(({navigation}) => {
   const [checkBookmark, setCheckBookmark] = useState(false);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Биофизика',
-      headerTitleAlign: 'center',
-      headerRight: () => (
-        <View>
-          <Pressable onPress={() => alert('Click!')}>
-            <SvgXml xml={svgFlash} />
-          </Pressable>
-        </View>
-      ),
-    });
-  }, [navigation]);
+  if (GlobalStore.showIntro) {
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        title: 'Биофизика',
+        headerTitleAlign: 'center',
+        headerShown: false,
+        headerRight: () => (
+          <View>
+            <Pressable onPress={() => alert('Click!')}>
+              <SvgXml xml={svgFlash} />
+            </Pressable>
+          </View>
+        ),
+      });
+    }, [navigation]);
+  } else {
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        title: 'Биофизика',
+        headerTitleAlign: 'center',
+        headerShown: true,
+        headerRight: () => (
+          <View>
+            <Pressable onPress={() => alert('Click!')}>
+              <SvgXml xml={svgFlash} />
+            </Pressable>
+          </View>
+        ),
+      });
+    }, [navigation]);
+  }
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      if (save.length >= 1) {
+      if (GlobalStore.save.length >= 1) {
         setCheckBookmark(true);
       } else {
         setCheckBookmark(false);
@@ -102,7 +117,7 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {introScreen.showIntro ? (
+      {GlobalStore.showIntro ? (
         <SliderIntro
           renderNextButton={renderNextButton}
           renderDoneButton={renderDoneButton}
@@ -158,7 +173,7 @@ const HomeScreen = ({navigation}) => {
       )}
     </View>
   );
-};
+});
 
 export default HomeScreen;
 
@@ -248,15 +263,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#387EA6',
   },
-  // saveLinkButtonContent: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
-  // saveLinkText: {
-  //   marginLeft: 14,
-  //   fontSize: 18,
-  //   color: '#c2c2c2',
-  // },
+  saveLinkButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  saveLinkText: {
+    marginLeft: 14,
+    fontSize: 18,
+    color: '#c2c2c2',
+  },
   // imageStyle: {
   //   height: 10,
   //   width: 10,

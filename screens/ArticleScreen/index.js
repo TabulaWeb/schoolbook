@@ -12,21 +12,19 @@ import {
 import Modal from 'react-native-modal';
 import {dataArticle} from '../../data/chapter1';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
-import Svg, {Path} from 'react-native-svg';
 import {SvgXml} from 'react-native-svg';
 import {
-  svgButtonText, 
-  svgButtonSun, 
-  svgHeaderAcriveMark, 
+  svgButtonText,
+  svgButtonSun,
+  svgHeaderAcriveMark,
   svgHeaderAnactiveMark,
   svgSmallText,
   svgBigText,
   svgSmallLight,
-  svgBigLight
-} from '../../components/svgImage'
+  svgBigLight,
+} from '../../components/svgImage';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import ImageViewer from 'react-native-image-zoom-viewer';
-import {save} from '../../store/global';
+import GlobalStore from '../../store/global';
 
 const ArticleScreen = ({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
@@ -35,7 +33,7 @@ const ArticleScreen = ({route, navigation}) => {
   const [checkSaveArticle, setCheckSaveArticle] = useState(null);
 
   useEffect(() => {
-    save.map(i => {
+    GlobalStore.save.map(i => {
       if (i.savedSubArticle == articleKey && i.savedArticle == chapterId) {
         setCheckSaveArticle(true);
       }
@@ -81,16 +79,19 @@ const ArticleScreen = ({route, navigation}) => {
   }, [articleKey, chapterId, navigation, toggleModal, toggleModalLight]);
 
   function createSavedAeticle() {
-    save.push({savedArticle: chapterId, savedSubArticle: articleKey});
+    GlobalStore.setSaveBookmark({
+      savedArticle: chapterId,
+      savedSubArticle: articleKey,
+    });
     setCheckSaveArticle(true);
   }
 
   function removeSavedAeticle() {
     setCheckSaveArticle(false);
-    let itemsqwerty = save.findIndex(
+    let itemsqwerty = GlobalStore.save.findIndex(
       i => i.savedSubArticle == articleKey && i.savedArticle == chapterId,
     );
-    save.splice(itemsqwerty, 1);
+    GlobalStore.removeSaveBookmark(itemsqwerty);
   }
 
   // Slider text

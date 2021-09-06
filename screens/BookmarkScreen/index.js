@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {dataArticle} from '../../data/chapter1';
-import {save} from '../../store/global';
+import GlobalStore from '../../store/global';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const BookmarkScreen = ({navigation}) => {
-  let [bookmarkContent, setBookmarkContent] = useState(save);
+  let [bookmarkContent, setBookmarkContent] = useState(GlobalStore.save);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -15,20 +16,22 @@ const BookmarkScreen = ({navigation}) => {
 
   useEffect(() => {
     const getBookmark = navigation.addListener('focus', async () => {
-      if (save.length < 1) {
+      if (GlobalStore.save.length < 1) {
         navigation.navigate('HomeScreen');
       }
     });
     return getBookmark;
   }, [navigation]);
 
-  useEffect(() => {
-    const getSaveBookmark = navigation.addListener('focus', async () => {
-      await setBookmarkContent(save);
-      console.log(bookmarkContent);
-    });
-    return getSaveBookmark;
-  }, [bookmarkContent, navigation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const getSaveBookmark = navigation.addListener('focus', async () => {
+        await setBookmarkContent(GlobalStore.save);
+        console.log(bookmarkContent);
+      });
+      return getSaveBookmark;
+    }, [bookmarkContent, navigation]),
+  );
 
   return (
     <ScrollView style={styles.container}>
