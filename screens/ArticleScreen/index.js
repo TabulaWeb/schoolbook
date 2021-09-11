@@ -25,8 +25,13 @@ import {
 } from '../../components/svgImage';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import GlobalStore from '../../store/global';
+import {observer} from 'mobx-react';
+import {configure} from 'mobx';
 
-const ArticleScreen = ({route, navigation}) => {
+configure({enforceActions: 'observed'});
+
+
+const ArticleScreen = observer(({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLight, setModalVisibleLight] = useState(false);
@@ -54,6 +59,7 @@ const ArticleScreen = ({route, navigation}) => {
     navigation.setOptions({
       title: '',
       headerTitleAlign: 'center',
+      headerShadowVisible: false,
       headerRight: () => (
         <View style={styles.buttonContent}>
           <Pressable onPress={() => toggleModal()}>
@@ -78,7 +84,7 @@ const ArticleScreen = ({route, navigation}) => {
     });
   }, [articleKey, chapterId, navigation, toggleModal, toggleModalLight]);
 
-  function createSavedAeticle() {
+  async function createSavedAeticle() {
     GlobalStore.setSaveBookmark({
       savedArticle: chapterId,
       savedSubArticle: articleKey,
@@ -203,7 +209,7 @@ const ArticleScreen = ({route, navigation}) => {
       </Modal>
     </ScrollView>
   );
-};
+});
 
 export default ArticleScreen;
 

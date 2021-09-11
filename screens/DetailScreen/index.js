@@ -8,6 +8,7 @@ const DetailScreen = ({route, navigation}) => {
     navigation.setOptions({
       title: dataArticle[idChapter].title,
       headerTitleAlign: 'center',
+      headerShadowVisible: false,
     });
   }, [idChapter, navigation]);
 

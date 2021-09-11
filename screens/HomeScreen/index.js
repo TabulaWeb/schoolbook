@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+
 import {
   View,
   ScrollView,
@@ -10,99 +11,51 @@ import {
 import {dataArticle} from '../../data/chapter1';
 import {SvgXml} from 'react-native-svg';
 import {svgFlash, svgArrow, svgBookmark} from '../../components/svgImage';
-import {introScreen} from '../../store/global';
-import GlobalStore from '../../store/global';
-import SliderIntro from 'react-native-slider-intro';
 import {observer} from 'mobx-react';
-
-const slides = [
-  {
-    index: 1,
-    title: 'Биофизика',
-    text: 'Интерактивное образовательное приложение предназначено для студентов медицинских, биологических и фармацевтических специальностей. Приложение будет интересно студентам, аспирантам – всем, кто интересуется современным состоянием биологической и медицинской физики.',
-    image: require('../../assets/atom.png'),
-    backgroundColor: '#EFF2F3',
-  },
-  {
-    index: 2,
-    title: 'Биофизика',
-    text: 'Учебное пособие «Биофизика. Физика для медицинских специальностей» с функцией поиска по главам.',
-    image: require('../../assets/IntroTwo.png'),
-    backgroundColor: '#EFF2F3',
-  },
-  {
-    index: 3,
-    title: 'Биофизика',
-    text: 'Практикум по физике для студентов-медиков, который состоит из вопросов и задач по основным темам курса.',
-    image: require('../../assets/IntroThree.png'),
-    backgroundColor: '#EFF2F3',
-  },
-];
-
-const renderNextButton = () => {
-  return (
-    <View style={styles.NextButton}>
-      <Text style={styles.textNextButton}>Далее</Text>
-    </View>
-  );
-};
-
-const renderDoneButton = () => {
-  return (
-    <View style={styles.DoneButton}>
-      <Text style={styles.textDoneButton}>Закрыть</Text>
-    </View>
-  );
-};
-
-const renderSkipButton = () => {
-  return (
-    <View style={styles.SkipButton}>
-      <Text style={styles.textSkipButton}>Пропустить</Text>
-    </View>
-  );
-};
-
-function closeIntro() {
-  GlobalStore.setSgowIntro(false);
-}
-
-console.log(introScreen.showIntro);
+import GlobalStore from '../../store/global';
+import {SearchBar} from 'react-native-elements';
 
 const HomeScreen = observer(({navigation}) => {
   const [checkBookmark, setCheckBookmark] = useState(false);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState([]);
 
-  if (GlobalStore.showIntro) {
-    React.useLayoutEffect(() => {
-      navigation.setOptions({
-        title: 'Биофизика',
-        headerTitleAlign: 'center',
-        headerShown: false,
-        headerRight: () => (
-          <View>
-            <Pressable onPress={() => alert('Click!')}>
-              <SvgXml xml={svgFlash} />
-            </Pressable>
-          </View>
-        ),
-      });
-    }, [navigation]);
-  } else {
-    React.useLayoutEffect(() => {
-      navigation.setOptions({
-        title: 'Биофизика',
-        headerTitleAlign: 'center',
-        headerShown: true,
-        headerRight: () => (
-          <View>
-            <Pressable onPress={() => alert('Click!')}>
-              <SvgXml xml={svgFlash} />
-            </Pressable>
-          </View>
-        ),
-      });
-    }, [navigation]);
-  }
+  useEffect(() => {
+    setFilter(dataArticle);
+  }, []);
+
+  const updateSearch = search => {
+    setSearch(search);
+    const filtredBook = dataArticle.filter(book => {
+      return book.title.toLowerCase().includes(search.toLowerCase());
+    });
+    setFilter(filtredBook);
+
+    console.log(filter);
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Биофизика',
+      headerTitleAlign: 'center',
+      headerShown: true,
+      headerShadowVisible: false,
+      headerStyle: {
+        backgroundColor: '#EEF1F3',
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0,
+      },
+      headerLeft: () => <Text />,
+      headerRight: () => (
+        <View>
+          <Pressable onPress={() => navigation.navigate('SubscriptionScreen')}>
+            <SvgXml xml={svgFlash} />
+          </Pressable>
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -112,65 +65,58 @@ const HomeScreen = observer(({navigation}) => {
         setCheckBookmark(false);
       }
     });
+
     return unsubscribe;
   }, [navigation]);
 
   return (
     <View style={styles.container}>
-      {GlobalStore.showIntro ? (
-        <SliderIntro
-          renderNextButton={renderNextButton}
-          renderDoneButton={renderDoneButton}
-          renderSkipButton={renderSkipButton}
-          navContainerMaxSizePercent={0.3}
-          navigationBarHeight={200}
-          fixDotBackgroundColor={'#93B8CC'}
-          animatedDotBackgroundColor={'#387EA6'}
-          statusBar={true}
-          statusBarColor={'#387EA6'}
-          columnButtonStyle={true}
-          data={slides}
-          onDone={closeIntro}
-          onSkip={closeIntro}
-        />
-      ) : (
-        <View>
-          <View style={[styles.content, styles.searchContent]}>
-            <TextInput style={styles.searchInput} placeholder="Поиск" />
-          </View>
-          <ScrollView style={[styles.content, styles.itemsbook]}>
-            {checkBookmark ? (
-              <Pressable
-                style={styles.saveLinkContainer}
-                onPress={() => navigation.navigate('BookmarkScreen')}>
-                <View style={styles.saveLinkButtonContent}>
-                  <SvgXml xml={svgBookmark} />
-                  <Text style={styles.saveLinkText}>Перейти к закладкам</Text>
-                </View>
-                <View>
-                  <SvgXml xml={svgArrow} />
-                </View>
-              </Pressable>
-            ) : (
-              <Text />
-            )}
-            {dataArticle.map(i => (
-              <View key={i.id}>
-                <Pressable
-                  style={styles.itembook}
-                  onPress={() =>
-                    navigation.navigate('DetailScreen', {
-                      idChapter: i.id,
-                    })
-                  }>
-                  <Text style={styles.itembookNumber}>{i.id}</Text>
-                  <Text style={styles.itembookTitle}>{i.title}</Text>
-                </Pressable>
-              </View>
-            ))}
-          </ScrollView>
+      <View>
+        <View style={[styles.content, styles.searchContent]}>
+          <SearchBar
+            placeholder="Поиск"
+            lightTheme="true"
+            clearIcon={true}
+            round="true"
+            inputContainerStyle={styles.searchInput}
+            onChangeText={updateSearch}
+            value={search}
+            containerStyle={styles.searchbar}
+            inputStyle={styles.inputStyl}
+          />
         </View>
-      )}
+        <ScrollView style={[styles.content, styles.itemsbook]}>
+          {checkBookmark ? (
+            <Pressable
+              style={styles.saveLinkContainer}
+              onPress={() => navigation.navigate('BookmarkScreen')}>
+              <View style={styles.saveLinkButtonContent}>
+                <SvgXml xml={svgBookmark} />
+                <Text style={styles.saveLinkText}>Перейти к закладкам</Text>
+              </View>
+              <View>
+                <SvgXml xml={svgArrow} />
+              </View>
+            </Pressable>
+          ) : (
+            <Text />
+          )}
+          {filter.map(i => (
+            <View key={i.id}>
+              <Pressable
+                style={styles.itembook}
+                onPress={() =>
+                  navigation.navigate('DetailScreen', {
+                    idChapter: i.id,
+                  })
+                }>
+                <Text style={styles.itembookNumber}>{i.id}</Text>
+                <Text style={styles.itembookTitle}>{i.title}</Text>
+              </Pressable>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
     </View>
   );
 });
@@ -180,6 +126,24 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  searchbar: {
+    backgroundColor: null,
+    borderColor: null,
+    borderTopWidth: null,
+    marginTop: 10,
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 0,
+    paddingHorizontal: 0,
+  },
+  searchInput: {
+    backgroundColor: '#DBDBDD',
+    borderColor: null,
+    borderTopWidth: null,
+  },
+  inputStyl: {
+    paddingHorizontal: 0,
   },
   textSlider: {
     color: '#000',

@@ -3,14 +3,19 @@ import {dataArticle} from '../../data/chapter1';
 import GlobalStore from '../../store/global';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import {observer} from 'mobx-react';
+import {configure} from 'mobx';
 
-const BookmarkScreen = ({navigation}) => {
+configure({enforceActions: 'observed'});
+
+const BookmarkScreen = observer(({navigation}) => {
   let [bookmarkContent, setBookmarkContent] = useState(GlobalStore.save);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Закладки',
       headerTitleAlign: 'center',
+      headerShadowVisible: false,
     });
   }, [navigation]);
 
@@ -59,7 +64,7 @@ const BookmarkScreen = ({navigation}) => {
       ))}
     </ScrollView>
   );
-};
+});
 
 export default BookmarkScreen;
 

@@ -1,26 +1,39 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {View} from 'react-native';
-import {introScreen} from './store/global';
 import LottieView from 'lottie-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import ArticleScreen from './screens/ArticleScreen';
 import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
 import BookmarkScreen from './screens/BookmarkScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import GlobalStore from './store/global';
+import IntroScreen from './screens/IntroScreen';
+import SubscriptionScreen from './screens/SubscruptionScreen';
 
 const Stack = createNativeStackNavigator();
+const IntroStack = createNativeStackNavigator();
 
 const App = () => {
+  const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem('alreadyLaunched').then(value => {
+      if (value == null) {
+        AsyncStorage.setItem('alreadyLaunched', 'true');
+        setIsFeerstLaunch(true);
+      } else {
+        setIsFeerstLaunch(false);
+      }
+    });
+  }, []);
+
   const initialLoginState = {
     isLoading: true,
     userName: null,
     userToken: null,
   };
-
-  console.log(GlobalStore.showIntro);
 
   const loginReducer = (prevState, action) => {
     switch (action.type) {
@@ -116,80 +129,216 @@ const App = () => {
     );
   }
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#F3F5F5',
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
-          headerTintColor: '#000',
-          headerTitleStyle: {
-            fontWeight: 'normal',
-            textAlign: 'center',
-          },
-        }}>
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{
-            title: 'Биофизика',
+  if (isFirstLaunch == null) {
+    return null;
+  } else if (isFirstLaunch == true) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
             headerStyle: {
               backgroundColor: '#F3F5F5',
-              elevation: 0,
-              shadowOpacity: 0,
-              borderBottomWidth: 0,
+              elevation: null,
+              shadowOpacity: null,
+              borderBottomWidth: null,
             },
+            headerLargeTitleShadowVisible: false,
+            elevation: null,
+            shadowOpacity: null,
+            borderBottomWidth: null,
+            headerTintColor: '#000',
             headerTitleStyle: {
-              fontWeight: '500',
+              fontWeight: 'normal',
+              textAlign: 'center',
             },
-          }}
-        />
-        <Stack.Screen
-          name="DetailScreen"
-          component={DetailScreen}
-          options={{
-            title: 'Подглава',
+          }}>
+          <Stack.Screen
+            name="IntroScreen"
+            component={IntroScreen}
+            options={{
+              title: 'Биофизика',
+              headerShown: false,
+              headerStyle: {
+                backgroundColor: '#F3F5F5',
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="HomeScreen"
+            component={HomeScreen}
+            options={{
+              title: 'Биофизика',
+              headerShown: false,
+              headerStyle: {
+                backgroundColor: '#F3F5F5',
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="DetailScreen"
+            component={DetailScreen}
+            options={{
+              title: 'Подглава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="SubscriptionScreen"
+            component={SubscriptionScreen}
+            options={{
+              title: 'Подглава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="ArticleScreen"
+            component={ArticleScreen}
+            options={{
+              title: 'Глава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="BookmarkScreen"
+            component={BookmarkScreen}
+            options={{
+              title: 'Глава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  } else {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
             headerStyle: {
-              backgroundColor: '#EEF1F3',
+              backgroundColor: '#F3F5F5',
+              elevation: null,
+              shadowOpacity: null,
+              borderBottomWidth: null,
+              shadowOffset: {
+                height: null,
+              },
+              shadowRadius: null,
             },
+            headerLargeTitleShadowVisible: false,
+            headerTintColor: '#000',
             headerTitleStyle: {
-              fontWeight: '500',
+              fontWeight: 'normal',
+              textAlign: 'center',
             },
-          }}
-        />
-        <Stack.Screen
-          name="ArticleScreen"
-          component={ArticleScreen}
-          options={{
-            title: 'Глава',
-            headerStyle: {
-              backgroundColor: '#EEF1F3',
-            },
-            headerTitleStyle: {
-              fontWeight: '500',
-            },
-          }}
-        />
-        <Stack.Screen
-          name="BookmarkScreen"
-          component={BookmarkScreen}
-          options={{
-            title: 'Глава',
-            headerStyle: {
-              backgroundColor: '#EEF1F3',
-            },
-            headerTitleStyle: {
-              fontWeight: '500',
-            },
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+          }}>
+          <Stack.Screen
+            name="HomeScreen"
+            component={HomeScreen}
+            options={{
+              title: 'Биофизика',
+              headerStyle: {
+                backgroundColor: '#F3F5F5',
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+              },
+              headerLargeTitleShadowVisible: false,
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="DetailScreen"
+            component={DetailScreen}
+            options={{
+              title: 'Подглава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+                elevation: null,
+                shadowOpacity: null,
+                borderBottomWidth: null,
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="SubscriptionScreen"
+            component={SubscriptionScreen}
+            options={{
+              title: 'Подглава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="ArticleScreen"
+            component={ArticleScreen}
+            options={{
+              title: 'Глава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+          <Stack.Screen
+            name="BookmarkScreen"
+            component={BookmarkScreen}
+            options={{
+              title: 'Глава',
+              headerStyle: {
+                backgroundColor: '#EEF1F3',
+              },
+              headerTitleStyle: {
+                fontWeight: '500',
+              },
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 };
 
 export default App;
