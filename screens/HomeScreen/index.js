@@ -1,13 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  Pressable,
-  TextInput,
-} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, Pressable} from 'react-native';
 import {dataArticle} from '../../data/chapter1';
 import {SvgXml} from 'react-native-svg';
 import {svgFlash, svgArrow, svgBookmark} from '../../components/svgImage';
@@ -76,7 +69,12 @@ const HomeScreen = observer(({navigation}) => {
           <SearchBar
             placeholder="Поиск"
             lightTheme="true"
-            clearIcon={true}
+            searchIcon={{
+              name: 'search',
+            }}
+            clearIcon={{
+              name: 'close',
+            }}
             round="true"
             inputContainerStyle={styles.searchInput}
             onChangeText={updateSearch}
