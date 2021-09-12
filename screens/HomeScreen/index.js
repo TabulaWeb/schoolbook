@@ -99,10 +99,10 @@ const HomeScreen = observer(({navigation}) => {
           ) : (
             <Text />
           )}
-          {filter.map(i => (
+          {filter.map((i, book) => (
             <View key={i.id}>
               <Pressable
-                style={styles.itembook}
+                style={book === 0 ? styles.noBorderBook : styles.itembook}
                 onPress={() =>
                   navigation.navigate('DetailScreen', {
                     idChapter: i.id,
@@ -124,6 +124,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   searchbar: {
     backgroundColor: null,
@@ -134,14 +135,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     borderBottomWidth: 0,
     paddingHorizontal: 0,
-  },
-  searchInput: {
-    backgroundColor: '#DBDBDD',
-    borderColor: null,
-    borderTopWidth: null,
+    paddingBottom: 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    marginTop: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   inputStyl: {
     paddingHorizontal: 0,
+    paddingBottom: 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    marginTop: 0,
+    marginLeft: 0,
+    paddingLeft: 0,
+    paddingRight: 0,
+    marginRight: 0,
   },
   textSlider: {
     color: '#000',
@@ -182,19 +194,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 15,
     alignItems: 'center',
+    marginBottom: 15,
+    marginTop: 15,
   },
   searchContent: {
     paddingHorizontal: 20,
-    paddingVertical: 13,
+    // paddingVertical: 13,
     backgroundColor: '#EEF1F3',
+    paddingBottom: 15,
   },
   searchInput: {
     width: '100%',
     fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 34,
+    paddingVertical: 1,
+    paddingHorizontal: 4,
     borderRadius: 8,
-    backgroundColor: '#E7E9EB',
+    backgroundColor: '#E8EBEC',
   },
   itemsbook: {
     paddingLeft: 20,
@@ -204,11 +219,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingRight: 20,
   },
+  noBorderBook: {
+    paddingTop: 0,
+    flexDirection: 'row',
+    paddingRight: 20,
+  },
   itembookNumber: {
     marginRight: 21,
     fontSize: 16,
     color: '#B1B5B7',
     fontWeight: '500',
+    paddingTop: 2,
   },
   itembookTitle: {
     fontSize: 18,
@@ -234,37 +255,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#c2c2c2',
   },
-  // imageStyle: {
-  //   height: 10,
-  //   width: 10,
-  // },
-  // wrapper: {
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   marginVertical: 30,
-  // },
-  // header: {
-  //   fontSize: 30,
-  //   fontWeight: 'bold',
-  //   marginBottom: 20,
-  // },
-  // paragraph: {
-  //   fontSize: 17,
-  // },
-  // paginationWrapper: {
-  //   position: 'absolute',
-  //   bottom: 200,
-  //   left: 0,
-  //   right: 0,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   flexDirection: 'row',
-  // },
-  // paginationDots: {
-  //   height: 10,
-  //   width: 10,
-  //   borderRadius: 10 / 2,
-  //   backgroundColor: '#0898A0',
-  //   marginLeft: 10,
-  // },
 });

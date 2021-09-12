@@ -8,6 +8,8 @@ import {
   ScrollView,
   Button,
   useWindowDimensions,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import {dataArticle} from '../../data/chapter1';
@@ -29,7 +31,6 @@ import {observer} from 'mobx-react';
 import {configure} from 'mobx';
 
 configure({enforceActions: 'observed'});
-
 
 const ArticleScreen = observer(({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
@@ -158,9 +159,12 @@ const ArticleScreen = observer(({route, navigation}) => {
 
       <Modal
         isVisible={isModalVisible}
-        backdropOpacity={0.3}
+        backdropOpacity={0}
         swipeDirection="down"
         style={styles.modalContainer}>
+        <TouchableWithoutFeedback onPress={toggleModal}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
         <View style={styles.modalContent}>
           <View style={styles.containerLight}>
             <View style={[styles.smalLight, styles.svgLight]}>
@@ -177,15 +181,17 @@ const ArticleScreen = observer(({route, navigation}) => {
               <SvgXml xml={svgBigText} />
             </View>
           </View>
-          <Button title="Hide modal" onPress={toggleModal} />
         </View>
       </Modal>
 
       <Modal
         isVisible={isModalVisibleLight}
-        backdropOpacity={0.3}
+        backdropOpacity={0}
         swipeDirection="down"
         style={styles.modalContainer}>
+        <TouchableWithoutFeedback onPress={toggleModalLight}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
         <View style={styles.modalContent}>
           <View style={styles.containerLight}>
             <View style={[styles.smalLight, styles.svgLight]}>
@@ -204,7 +210,6 @@ const ArticleScreen = observer(({route, navigation}) => {
               <SvgXml xml={svgBigLight} />
             </View>
           </View>
-          <Button title="Hide modal" onPress={toggleModalLight} />
         </View>
       </Modal>
     </ScrollView>
@@ -216,6 +221,7 @@ export default ArticleScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   articleContainer: {
     paddingHorizontal: 20,
@@ -268,6 +274,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   imageArticle: {
-    marginBottom: 20
-  }
+    marginBottom: 20,
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
 });
