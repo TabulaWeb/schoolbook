@@ -33,13 +33,13 @@ const BookmarkScreen = observer(({navigation}) => {
     React.useCallback(() => {
       const getSaveBookmark = navigation.addListener('focus', async () => {
         await setBookmarkContent(GlobalStore.bookMarkSave);
-        console.log(bookmarkContent);
+        // console.log(bookmarkContent);
       });
       return getSaveBookmark;
-    }, [bookmarkContent, navigation]),
+    }, [navigation]),
   );
 
-  console.log(bookmarkContent);
+  // console.log(bookmarkContent);
 
   return (
     <ScrollView style={styles.container}>
@@ -79,6 +79,7 @@ export default BookmarkScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   itemsbook: {
     paddingLeft: 20,

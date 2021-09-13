@@ -11,10 +11,6 @@ const HomeScreen = observer(({navigation}) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState([]);
 
-  useEffect(() => {
-    setFilter(GlobalStore.bookData);
-  }, []);
-
   const updateSearch = search => {
     setSearch(search);
     const filtredBook = GlobalStore.bookData.filter(book => {
@@ -24,6 +20,8 @@ const HomeScreen = observer(({navigation}) => {
   };
 
   React.useLayoutEffect(() => {
+    setFilter(GlobalStore.bookData);
+
     navigation.setOptions({
       title: 'Биофизика',
       headerTitleAlign: 'center',
@@ -46,10 +44,9 @@ const HomeScreen = observer(({navigation}) => {
     });
   }, [navigation]);
 
-  console.log(GlobalStore.bookMarkSave.length);
-
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
+      // console.log(GlobalStore.bookMarkSave);
       if (GlobalStore.bookMarkSave.length >= 1) {
         setCheckBookmark(true);
       } else {
@@ -58,6 +55,8 @@ const HomeScreen = observer(({navigation}) => {
     });
     return unsubscribe;
   }, [navigation]);
+
+  alert(filter);
 
   return (
     <View style={styles.container}>

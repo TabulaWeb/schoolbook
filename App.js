@@ -41,7 +41,13 @@ const App = () => {
       },
     );
     const bookmark = await bookMarkDatas.json();
-    GlobalStore.setBookmarks(bookmark);
+
+    bookmark.map(i => {
+      GlobalStore.pushBookMark({
+        info: {section_id: i.info.section_id, article_id: i.info.article_id},
+      });
+    });
+    // GlobalStore.setBookmarks(bookmark);
   };
 
   useEffect(() => {

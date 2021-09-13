@@ -40,15 +40,17 @@ const ArticleScreen = observer(({route, navigation}) => {
 
   // Проверка на наличе в закладках
   useEffect(() => {
-    GlobalStore.bookMarkSave.map(i => {
-      if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
-        setDeleteSave(i.id);
-        setCheckSaveArticle(true);
-      }
+    const unsubscribe = navigation.addListener('focus', async () => {
+      GlobalStore.bookMarkSave.map(i => {
+        if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
+          setDeleteSave(i.id);
+          setCheckSaveArticle(true);
+        }
+      });
     });
-  }, [articleKey, chapterId]);
 
-  console.log(GlobalStore.bookMarkSave);
+    return unsubscribe;
+  }, [articleKey, chapterId, navigation]);
 
   const toggleModal = useCallback(() => {
     setModalVisible(!isModalVisible);
@@ -105,28 +107,40 @@ const ArticleScreen = observer(({route, navigation}) => {
     })
       .then(response => response.json())
       .then(json => {
-        console.log(json);
+        // console.log(json);
       });
+    GlobalStore.pushBookMark({
+      info: {section_id: chapterId, article_id: articleKey},
+    });
     setCheckSaveArticle(true);
   }
 
-  console.log(deleteSaveArticle);
   // Убрать из закладок
   function removeSavedAeticle() {
-    fetch(
-      `http://194.67.116.116:1337/api/bookmark​/delete​/${deleteSaveArticle}​/`,
-      {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      },
-    )
-      .then(response => response.json())
-      .then(json => {
-        console.log(json);
-      });
+    // fetch(
+    //   `http://194.67.116.116:1337/api/bookmark​/delete​/${deleteSaveArticle}​/`,
+    //   {
+    //     method: 'DELETE',
+    //     headers: {
+    //       Accept: 'application/json',
+    //       'Content-Type': 'application/json',
+    //     },
+    //   },
+    // )
+    //   .then(response => response.json())
+    //   .then(json => {
+    //     console.log(json);
+    //   });
+    // GlobalStore.removeBookMark({
+    //   info: {article_id: articleKey, section_id: chapterId},
+    // });
+
+    GlobalStore.bookMarkSave.map((i, k) => {
+      if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
+        GlobalStore.removeBookMark(k);
+      }
+    });
+    console.log(GlobalStore.bookMarkSave);
     setCheckSaveArticle(false);
   }
 

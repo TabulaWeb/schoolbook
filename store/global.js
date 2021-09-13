@@ -16,6 +16,14 @@ class GlobalStore {
   setBookmarks(value) {
     this.bookMarkSave = value;
   }
+
+  pushBookMark(value) {
+    this.bookMarkSave.push(value);
+  }
+
+  removeBookMark(value) {
+    this.bookMarkSave.splice(value, 1);
+  }
 }
 
 export default new GlobalStore();
