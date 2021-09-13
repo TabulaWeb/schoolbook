@@ -12,7 +12,6 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import {dataArticle} from '../../data/chapter1';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import {SvgXml} from 'react-native-svg';
 import {
@@ -37,14 +36,19 @@ const ArticleScreen = observer(({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisibleLight, setModalVisibleLight] = useState(false);
   const [checkSaveArticle, setCheckSaveArticle] = useState(null);
+  const [deleteSaveArticle, setDeleteSave] = useState(null);
 
+  // Проверка на наличе в закладках
   useEffect(() => {
-    GlobalStore.save.map(i => {
-      if (i.savedSubArticle == articleKey && i.savedArticle == chapterId) {
+    GlobalStore.bookMarkSave.map(i => {
+      if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
+        setDeleteSave(i.id);
         setCheckSaveArticle(true);
       }
     });
-  }, [articleKey, chapterId, checkSaveArticle]);
+  }, [articleKey, chapterId]);
+
+  console.log(GlobalStore.bookMarkSave);
 
   const toggleModal = useCallback(() => {
     setModalVisible(!isModalVisible);
@@ -85,20 +89,45 @@ const ArticleScreen = observer(({route, navigation}) => {
     });
   }, [articleKey, chapterId, navigation, toggleModal, toggleModalLight]);
 
-  async function createSavedAeticle() {
-    GlobalStore.setSaveBookmark({
-      savedArticle: chapterId,
-      savedSubArticle: articleKey,
-    });
+  // Добавить в закладки
+  function createSavedAeticle() {
+    fetch('http://194.67.116.116:1337/api/bookmark/', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: 'TFETQRTTZAD0EPHP',
+        article_id:
+          GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].id,
+      }),
+    })
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+      });
     setCheckSaveArticle(true);
   }
 
+  console.log(deleteSaveArticle);
+  // Убрать из закладок
   function removeSavedAeticle() {
+    fetch(
+      `http://194.67.116.116:1337/api/bookmark​/delete​/${deleteSaveArticle}​/`,
+      {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+      .then(response => response.json())
+      .then(json => {
+        console.log(json);
+      });
     setCheckSaveArticle(false);
-    let itemsqwerty = GlobalStore.save.findIndex(
-      i => i.savedSubArticle == articleKey && i.savedArticle == chapterId,
-    );
-    GlobalStore.removeSaveBookmark(itemsqwerty);
   }
 
   // Slider text
@@ -121,24 +150,27 @@ const ArticleScreen = observer(({route, navigation}) => {
   return (
     <ScrollView style={[styles.container, styles.articleContainer]}>
       <Text style={[styles.articleTitle, {fontSize: 18 + +sliderOneValue}]}>
-        {dataArticle[chapterId].detail[articleKey - 1].articleTitle}
+        {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].title}
       </Text>
-      {dataArticle[chapterId].detail[articleKey - 1].contentText.map(i => (
-        <View
-          key={dataArticle[chapterId].detail[
-            articleKey - 1
-          ].contentText.indexOf(i)}>
-          <Text style={[styles.articleText, {fontSize: 16 + +sliderOneValue}]}>
-            {i.text}
-          </Text>
-          {i.img !== '' ? (
-            <Image style={styles.imageArticle} source={i.img} />
-          ) : (
-            <Text />
-          )}
-        </View>
-      ))}
-      {dataArticle[chapterId].detail.length == articleKey ? (
+      {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].detail.map(
+        i => (
+          <View
+            key={GlobalStore.bookData[chapterId - 1].articles[
+              articleKey - 1
+            ].detail.indexOf(i)}>
+            <Text
+              style={[styles.articleText, {fontSize: 16 + +sliderOneValue}]}>
+              {i.text}
+            </Text>
+            {i.img !== null ? (
+              <Image style={styles.imageArticle} source={i.img} />
+            ) : (
+              <Text />
+            )}
+          </View>
+        ),
+      )}
+      {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
         <Pressable 
           style={styles.buttonNext}
           onPress={() => navigation.navigate('HomeScreen')}>

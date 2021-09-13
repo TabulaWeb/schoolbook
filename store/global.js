@@ -1,18 +1,20 @@
 import {makeAutoObservable} from 'mobx';
 
 class GlobalStore {
-  save = [];
+  bookData = [];
+
+  bookMarkSave = [];
 
   constructor() {
     makeAutoObservable(this);
   }
 
   setSaveBookmark(value) {
-    this.save.push(value);
+    this.bookData = value;
   }
 
-  removeSaveBookmark(value) {
-    this.save.splice(value, 1);
+  setBookmarks(value) {
+    this.bookMarkSave = value;
   }
 }
 

@@ -1,12 +1,13 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
-import {dataArticle} from '../../data/chapter1';
+import GlobalStore from '../../store/global';
 
 const DetailScreen = ({route, navigation}) => {
   const {idChapter} = route.params;
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: dataArticle[idChapter].title,
+      title: GlobalStore.bookData[idChapter - 1].title,
       headerTitleAlign: 'center',
       headerShadowVisible: false,
     });
@@ -15,18 +16,21 @@ const DetailScreen = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        {dataArticle[idChapter].detail.map(i => (
+        {GlobalStore.bookData[idChapter - 1].articles.map(i => (
           <View key={i.key}>
             <Pressable
               style={styles.itembook}
               onPress={() =>
                 navigation.navigate('ArticleScreen', {
-                  articleKey: i.key,
+                  articleKey:
+                    GlobalStore.bookData[idChapter - 1].articles.indexOf(i) + 1,
                   chapterId: idChapter,
                 })
               }>
-              <Text style={styles.itembookNumber}>{i.number}</Text>
-              <Text style={styles.itembookTitle}>{i.articleTitle}</Text>
+              <Text style={styles.itembookNumber}>
+                {GlobalStore.bookData[idChapter - 1].articles.indexOf(i) + 1}
+              </Text>
+              <Text style={styles.itembookTitle}>{i.title}</Text>
             </Pressable>
           </View>
         ))}

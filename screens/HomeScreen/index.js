@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
-
 import {View, ScrollView, Text, StyleSheet, Pressable} from 'react-native';
-import {dataArticle} from '../../data/chapter1';
 import {SvgXml} from 'react-native-svg';
 import {svgFlash, svgArrow, svgBookmark} from '../../components/svgImage';
 import {observer} from 'mobx-react';
@@ -14,17 +12,15 @@ const HomeScreen = observer(({navigation}) => {
   const [filter, setFilter] = useState([]);
 
   useEffect(() => {
-    setFilter(dataArticle);
+    setFilter(GlobalStore.bookData);
   }, []);
 
   const updateSearch = search => {
     setSearch(search);
-    const filtredBook = dataArticle.filter(book => {
+    const filtredBook = GlobalStore.bookData.filter(book => {
       return book.title.toLowerCase().includes(search.toLowerCase());
     });
     setFilter(filtredBook);
-
-    console.log(filter);
   };
 
   React.useLayoutEffect(() => {
@@ -50,15 +46,16 @@ const HomeScreen = observer(({navigation}) => {
     });
   }, [navigation]);
 
+  console.log(GlobalStore.bookMarkSave.length);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      if (GlobalStore.save.length >= 1) {
+      if (GlobalStore.bookMarkSave.length >= 1) {
         setCheckBookmark(true);
       } else {
         setCheckBookmark(false);
       }
     });
-
     return unsubscribe;
   }, [navigation]);
 
@@ -130,7 +127,6 @@ const styles = StyleSheet.create({
     backgroundColor: null,
     borderColor: null,
     borderTopWidth: null,
-    marginTop: 10,
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,

@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {View} from 'react-native';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import GlobalStore from './store/global';
 import ArticleScreen from './screens/ArticleScreen';
 import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -13,12 +13,40 @@ import IntroScreen from './screens/IntroScreen';
 import SubscriptionScreen from './screens/SubscruptionScreen';
 
 const Stack = createNativeStackNavigator();
-const IntroStack = createNativeStackNavigator();
 
 const App = () => {
   const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
+  const CONTENT_BOOK = 'http://194.67.116.116:1337/api/sections/';
+
+  const getBookmarkJson = () => {
+    fetch(CONTENT_BOOK, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'TFETQRTTZAD0EPHP',
+      },
+    })
+      .then(response => response.json())
+      .then(json => {
+        GlobalStore.setSaveBookmark(json);
+      });
+  };
+
+  const getBookmarSavekJson = async () => {
+    const bookMarkDatas = await fetch(
+      'http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP',
+      {
+        method: 'GET',
+      },
+    );
+    const bookmark = await bookMarkDatas.json();
+    GlobalStore.setBookmarks(bookmark);
+  };
 
   useEffect(() => {
+    getBookmarkJson();
+    getBookmarSavekJson();
     AsyncStorage.getItem('alreadyLaunched').then(value => {
       if (value == null) {
         AsyncStorage.setItem('alreadyLaunched', 'true');

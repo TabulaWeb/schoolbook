@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {dataArticle} from '../../data/chapter1';
 import GlobalStore from '../../store/global';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
@@ -9,7 +8,9 @@ import {configure} from 'mobx';
 configure({enforceActions: 'observed'});
 
 const BookmarkScreen = observer(({navigation}) => {
-  let [bookmarkContent, setBookmarkContent] = useState(GlobalStore.save);
+  let [bookmarkContent, setBookmarkContent] = useState(
+    GlobalStore.bookMarkSave,
+  );
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -21,7 +22,7 @@ const BookmarkScreen = observer(({navigation}) => {
 
   useEffect(() => {
     const getBookmark = navigation.addListener('focus', async () => {
-      if (GlobalStore.save.length < 1) {
+      if (GlobalStore.bookMarkSave.length < 1) {
         navigation.navigate('HomeScreen');
       }
     });
@@ -31,12 +32,14 @@ const BookmarkScreen = observer(({navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       const getSaveBookmark = navigation.addListener('focus', async () => {
-        await setBookmarkContent(GlobalStore.save);
+        await setBookmarkContent(GlobalStore.bookMarkSave);
         console.log(bookmarkContent);
       });
       return getSaveBookmark;
     }, [bookmarkContent, navigation]),
   );
+
+  console.log(bookmarkContent);
 
   return (
     <ScrollView style={styles.container}>
@@ -46,17 +49,22 @@ const BookmarkScreen = observer(({navigation}) => {
             style={styles.itembook}
             onPress={() =>
               navigation.navigate('ArticleScreen', {
-                articleKey: i.savedSubArticle,
-                chapterId: i.savedArticle,
+                articleKey: i.info.article_id,
+                chapterId: i.info.section_id,
               })
             }>
             <Text style={styles.itembookNumber}>
-              {dataArticle[i.savedArticle].detail[i.savedSubArticle - 1].number}
+              {
+                GlobalStore.bookData[i.info.section_id - 1].articles[
+                  i.info.article_id - 1
+                ].id
+              }
             </Text>
             <Text style={styles.itembookTitle}>
               {
-                dataArticle[i.savedArticle].detail[i.savedSubArticle - 1]
-                  .articleTitle
+                GlobalStore.bookData[i.info.section_id - 1].articles[
+                  i.info.article_id - 1
+                ].title
               }
             </Text>
           </Pressable>
