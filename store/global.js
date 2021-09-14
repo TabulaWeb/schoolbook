@@ -1,4 +1,5 @@
 import {makeAutoObservable} from 'mobx';
+import UserStore from './user';
 
 class GlobalStore {
   bookData = [];
@@ -14,7 +15,6 @@ class GlobalStore {
       method: 'GET',
     })
       .then(response => {
-        alert(`Все главы книги: ${response.status}`);
         return response.json();
       })
       .then(json => {
@@ -23,11 +23,12 @@ class GlobalStore {
   }
 
   setBookmarks() {
-    fetch('http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP', {
-      method: 'GET',
+    fetch(
+      `http://194.67.116.116:1337/api/bookmarks/?token=${UserStore.userToken}`,
+      {
+        method: 'GET',
     })
       .then(response => {
-        alert(`сохраненные главы ${response.status}`);
         return response.json();
       })
       .then(json => {

@@ -4,6 +4,7 @@ import {SvgXml} from 'react-native-svg';
 import {svgFlash, svgArrow, svgBookmark} from '../../components/svgImage';
 import {observer} from 'mobx-react';
 import GlobalStore from '../../store/global';
+import UserStore from '../../store/user';
 import {SearchBar} from 'react-native-elements';
 
 const HomeScreen = observer(({navigation}) => {
@@ -43,6 +44,7 @@ const HomeScreen = observer(({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
+    console.log(UserStore.userToken);
     setFilter(GlobalStore.bookData);
     const unsubscribe = navigation.addListener('focus', async () => {
       // console.log(GlobalStore.bookMarkSave);

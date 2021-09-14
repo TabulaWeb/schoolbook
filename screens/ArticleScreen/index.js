@@ -26,6 +26,7 @@ import {
 } from '../../components/svgImage';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import GlobalStore from '../../store/global';
+import UserStore from '../../store/user';
 import {observer} from 'mobx-react';
 
 const ArticleScreen = observer(({route, navigation}) => {
@@ -113,7 +114,7 @@ const ArticleScreen = observer(({route, navigation}) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        token: 'TFETQRTTZAD0EPHP',
+        token: `${UserStore.userToken}`,
         article_id:
           GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].id,
       }),

@@ -5,6 +5,7 @@ import {View} from 'react-native';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStore from './store/global';
+import UserStore from './store/user';
 import ArticleScreen from './screens/ArticleScreen';
 import DetailScreen from './screens/DetailScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -14,23 +15,17 @@ import SubscriptionScreen from './screens/SubscruptionScreen';
 
 const Stack = createNativeStackNavigator();
 
-const getBookmarSavekJson = () => {
-  fetch('http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP', {
-    method: 'GET',
+const getUserToken = () => {
+  fetch('http://194.67.116.116:1337/api/user/', {
+    method: 'POST',
   })
     .then(response => {
-      alert(`сохраненные главы ${response.status}`);
       return response.json();
     })
     .then(json => {
-      json.map(i => {
-        GlobalStore.pushBookMark({
-          info: {
-            section_id: i.info.section_id,
-            article_id: i.info.article_id,
-          },
-        });
-      });
+      UserStore.setUserToken(json.token);
+      console.log(json.token);
+      AsyncStorage.setItem('token', `${json.token}`);
     });
 };
 
@@ -38,6 +33,7 @@ const App = () => {
   const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
 
   useEffect(() => {
+    // getUserToken();
     GlobalStore.setSaveBookmark();
     GlobalStore.setBookmarks();
     AsyncStorage.getItem('alreadyLaunched').then(value => {
@@ -47,6 +43,16 @@ const App = () => {
       } else {
         setIsFeerstLaunch(false);
       }
+    });
+
+    AsyncStorage.getItem('token').then(value => {
+      if (value == null) {
+        getUserToken();
+        AsyncStorage.setItem('token', `${UserStore.userToken}`);
+      } else {
+        UserStore.setUserToken(value);
+      }
+      console.log(value);
     });
   }, []);
 
