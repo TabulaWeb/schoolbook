@@ -14,45 +14,32 @@ import SubscriptionScreen from './screens/SubscruptionScreen';
 
 const Stack = createNativeStackNavigator();
 
-const App = () => {
-  const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
-  const CONTENT_BOOK = 'http://194.67.116.116:1337/api/sections/';
-
-  const getBookmarkJson = () => {
-    fetch(CONTENT_BOOK, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'TFETQRTTZAD0EPHP',
-      },
+const getBookmarSavekJson = () => {
+  fetch('http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP', {
+    method: 'GET',
+  })
+    .then(response => {
+      alert(`сохраненные главы ${response.status}`);
+      return response.json();
     })
-      .then(response => response.json())
-      .then(json => {
-        GlobalStore.setSaveBookmark(json);
-      });
-  };
-
-  const getBookmarSavekJson = async () => {
-    const bookMarkDatas = await fetch(
-      'http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP',
-      {
-        method: 'GET',
-      },
-    );
-    const bookmark = await bookMarkDatas.json();
-
-    bookmark.map(i => {
-      GlobalStore.pushBookMark({
-        info: {section_id: i.info.section_id, article_id: i.info.article_id},
+    .then(json => {
+      json.map(i => {
+        GlobalStore.pushBookMark({
+          info: {
+            section_id: i.info.section_id,
+            article_id: i.info.article_id,
+          },
+        });
       });
     });
-    // GlobalStore.setBookmarks(bookmark);
-  };
+};
+
+const App = () => {
+  const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
 
   useEffect(() => {
-    getBookmarkJson();
-    getBookmarSavekJson();
+    GlobalStore.setSaveBookmark();
+    GlobalStore.setBookmarks();
     AsyncStorage.getItem('alreadyLaunched').then(value => {
       if (value == null) {
         AsyncStorage.setItem('alreadyLaunched', 'true');

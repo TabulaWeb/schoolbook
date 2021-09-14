@@ -3,9 +3,6 @@ import GlobalStore from '../../store/global';
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {observer} from 'mobx-react';
-import {configure} from 'mobx';
-
-configure({enforceActions: 'observed'});
 
 const BookmarkScreen = observer(({navigation}) => {
   let [bookmarkContent, setBookmarkContent] = useState(

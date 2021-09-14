@@ -20,8 +20,6 @@ const HomeScreen = observer(({navigation}) => {
   };
 
   React.useLayoutEffect(() => {
-    setFilter(GlobalStore.bookData);
-
     navigation.setOptions({
       title: 'Биофизика',
       headerTitleAlign: 'center',
@@ -45,6 +43,7 @@ const HomeScreen = observer(({navigation}) => {
   }, [navigation]);
 
   useEffect(() => {
+    setFilter(GlobalStore.bookData);
     const unsubscribe = navigation.addListener('focus', async () => {
       // console.log(GlobalStore.bookMarkSave);
       if (GlobalStore.bookMarkSave.length >= 1) {
@@ -55,8 +54,6 @@ const HomeScreen = observer(({navigation}) => {
     });
     return unsubscribe;
   }, [navigation]);
-
-  alert(filter);
 
   return (
     <View style={styles.container}>

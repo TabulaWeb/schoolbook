@@ -27,9 +27,6 @@ import {
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import GlobalStore from '../../store/global';
 import {observer} from 'mobx-react';
-import {configure} from 'mobx';
-
-configure({enforceActions: 'observed'});
 
 const ArticleScreen = observer(({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
@@ -38,12 +35,28 @@ const ArticleScreen = observer(({route, navigation}) => {
   const [checkSaveArticle, setCheckSaveArticle] = useState(null);
   const [deleteSaveArticle, setDeleteSave] = useState(null);
 
+  const getBookmarSavekJson = async () => {
+    const bookMarkDatas = await fetch(
+      'http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP',
+      {
+        method: 'GET',
+      },
+    );
+    const bookmark = await bookMarkDatas.json();
+
+    bookmark.map(i => {
+      if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
+        setDeleteSave(i.id);
+      }
+    });
+  };
+
   // Проверка на наличе в закладках
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
+      getBookmarSavekJson();
       GlobalStore.bookMarkSave.map(i => {
         if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
-          setDeleteSave(i.id);
           setCheckSaveArticle(true);
         }
       });
@@ -116,26 +129,17 @@ const ArticleScreen = observer(({route, navigation}) => {
   }
 
   // Убрать из закладок
-  function removeSavedAeticle() {
-    // fetch(
-    //   `http://194.67.116.116:1337/api/bookmark​/delete​/${deleteSaveArticle}​/`,
-    //   {
-    //     method: 'DELETE',
-    //     headers: {
-    //       Accept: 'application/json',
-    //       'Content-Type': 'application/json',
-    //     },
-    //   },
-    // )
-    //   .then(response => response.json())
-    //   .then(json => {
-    //     console.log(json);
-    //   });
-    // GlobalStore.removeBookMark({
-    //   info: {article_id: articleKey, section_id: chapterId},
-    // });
+  async function removeSavedAeticle() {
+    let requestOptions = {
+      method: 'DELETE',
+    };
 
-    GlobalStore.bookMarkSave.map((i, k) => {
+    fetch(
+      `http://194.67.116.116:1337/api/bookmark/delete/${deleteSaveArticle}/`,
+      requestOptions,
+    );
+
+    await GlobalStore.bookMarkSave.map((i, k) => {
       if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
         GlobalStore.removeBookMark(k);
       }

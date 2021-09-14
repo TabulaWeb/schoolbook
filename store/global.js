@@ -9,12 +9,37 @@ class GlobalStore {
     makeAutoObservable(this);
   }
 
-  setSaveBookmark(value) {
-    this.bookData = value;
+  setSaveBookmark() {
+    fetch('http://194.67.116.116:1337/api/sections/', {
+      method: 'GET',
+    })
+      .then(response => {
+        alert(`Все главы книги: ${response.status}`);
+        return response.json();
+      })
+      .then(json => {
+        this.bookData = json;
+      });
   }
 
-  setBookmarks(value) {
-    this.bookMarkSave = value;
+  setBookmarks() {
+    fetch('http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP', {
+      method: 'GET',
+    })
+      .then(response => {
+        alert(`сохраненные главы ${response.status}`);
+        return response.json();
+      })
+      .then(json => {
+        json.map(i => {
+          this.bookMarkSave.push({
+            info: {
+              section_id: i.info.section_id,
+              article_id: i.info.article_id,
+            },
+          });
+        });
+      });
   }
 
   pushBookMark(value) {
