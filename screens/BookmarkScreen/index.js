@@ -30,17 +30,17 @@ const BookmarkScreen = observer(({navigation}) => {
     React.useCallback(() => {
       const getSaveBookmark = navigation.addListener('focus', async () => {
         await setBookmarkContent(GlobalStore.bookMarkSave);
-        // console.log(bookmarkContent);
+        console.log(bookmarkContent);
       });
       return getSaveBookmark;
-    }, [navigation]),
+    }, [bookmarkContent, navigation]),
   );
 
   // console.log(bookmarkContent);
 
   return (
     <ScrollView style={styles.container}>
-      {bookmarkContent.map(i => (
+      {bookmarkContent.map((i, k) => (
         <View style={styles.bookmarkContainer} key={bookmarkContent.indexOf(i)}>
           <Pressable
             style={styles.itembook}
@@ -50,13 +50,7 @@ const BookmarkScreen = observer(({navigation}) => {
                 chapterId: i.info.section_id,
               })
             }>
-            <Text style={styles.itembookNumber}>
-              {
-                GlobalStore.bookData[i.info.section_id - 1].articles[
-                  i.info.article_id - 1
-                ].id
-              }
-            </Text>
+            <Text style={styles.itembookNumber}>{k + 1}</Text>
             <Text style={styles.itembookTitle}>
               {
                 GlobalStore.bookData[i.info.section_id - 1].articles[
