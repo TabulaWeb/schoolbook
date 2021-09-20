@@ -35,10 +35,12 @@ const ArticleScreen = observer(({route, navigation}) => {
   const [isModalVisibleLight, setModalVisibleLight] = useState(false);
   const [checkSaveArticle, setCheckSaveArticle] = useState(null);
   const [deleteSaveArticle, setDeleteSave] = useState(null);
+  const [tooltip, setTooltip] = useState(false);
+  const [textTooltip, setTextTooltip] = useState(null);
 
   const getBookmarSavekJson = async () => {
     const bookMarkDatas = await fetch(
-      'http://194.67.116.116:1337/api/bookmarks/?token=TFETQRTTZAD0EPHP',
+      `http://194.67.111.21:1337/api/bookmarks/?token=${UserStore.userToken}`,
       {
         method: 'GET',
       },
@@ -51,6 +53,10 @@ const ArticleScreen = observer(({route, navigation}) => {
       }
     });
   };
+
+  React.useLayoutEffect(() => {
+    console.log(123123);
+  }, []);
 
   // Проверка на наличе в закладках
   useEffect(() => {
@@ -107,7 +113,7 @@ const ArticleScreen = observer(({route, navigation}) => {
 
   // Добавить в закладки
   function createSavedAeticle() {
-    fetch('http://194.67.116.116:1337/api/bookmark/', {
+    fetch('http://194.67.111.21:1337/api/bookmark/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -136,7 +142,7 @@ const ArticleScreen = observer(({route, navigation}) => {
     };
 
     fetch(
-      `http://194.67.116.116:1337/api/bookmark/delete/${deleteSaveArticle}/`,
+      `http://194.67.111.21:1337/api/bookmark/delete/${deleteSaveArticle}/`,
       requestOptions,
     );
 
@@ -145,7 +151,7 @@ const ArticleScreen = observer(({route, navigation}) => {
         GlobalStore.removeBookMark(k);
       }
     });
-    console.log(GlobalStore.bookMarkSave);
+    // console.log(GlobalStore.bookMarkSave);
     setCheckSaveArticle(false);
   }
 
@@ -171,24 +177,47 @@ const ArticleScreen = observer(({route, navigation}) => {
       <Text style={[styles.articleTitle, {fontSize: 18 + +sliderOneValue}]}>
         {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].title}
       </Text>
-      {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].detail.map(
-        i => (
+      <View>
+        {GlobalStore.bookData[chapterId - 1].articles[
+          articleKey - 1
+        ].detail.map(i => (
           <View
             key={GlobalStore.bookData[chapterId - 1].articles[
               articleKey - 1
             ].detail.indexOf(i)}>
-            <Text
-              style={[styles.articleText, {fontSize: 16 + +sliderOneValue}]}>
-              {i.text}
-            </Text>
-            {i.img !== null ? (
-              <Image style={styles.imageArticle} source={i.img} />
+            <View style={{flexDirection: 'row', width:'100%', flexWrap:'wrap'}}>
+              {i.text.split(' ').map(k => (
+               <View>
+                {k == i.word ? (
+                  <Pressable
+                    onPress={() => {
+                        setTooltip(!tooltip);
+                        setTextTooltip(i.additional_text);
+                    }}
+                    style={{marginRight: 6, borderBottomWidth: 1, borderStyle: 'dashed'}}
+                  >
+                    <Text
+                      style={{fontSize: 16 + +sliderOneValue}}
+                    >{k}</Text>
+                  </Pressable>
+                ) : (
+                  <Text style={{marginRight: 6, fontSize: 16 + +sliderOneValue}}>{k}</Text>
+                )}
+                </View>
+                )
+              )}
+            </View>
+            {i.image !== null ? (
+              <Image
+                style={styles.imageArticle}
+                source={{uri: `http://194.67.111.21:1337${i.image}`}}
+              />
             ) : (
               <Text />
             )}
           </View>
-        ),
-      )}
+        ))}
+      </View>
       {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
         <Pressable 
           style={styles.buttonNext}
@@ -198,15 +227,36 @@ const ArticleScreen = observer(({route, navigation}) => {
       ) : (
         <Pressable
           style={styles.buttonNext}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate('ArticleScreen', {
               articleKey: articleKey + 1,
               chapterId: chapterId,
-            })
-          }>
+            });
+            getBookmarSavekJson();
+          }}>
           <Text style={styles.buttonNextText}>Далее</Text>
         </Pressable>
       )}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={tooltip}
+        style={styles.modalContainerTooltip}>
+        <TouchableWithoutFeedback onPress={() => setTooltip(!tooltip)}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{textTooltip}</Text>
+            <Pressable
+              style={[styles.buttonTooltip, styles.buttonCloseTooltip]}
+              onPress={() => setTooltip(!tooltip)}>
+              <Text style={styles.textStyle}>Закрыть</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         isVisible={isModalVisible}
@@ -295,6 +345,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     margin: 0,
   },
+  modalContainerTooltip: {
+    justifyContent: 'center',
+    margin: 0,
+  },
   modalContent: {
     backgroundColor: '#fff',
   },
@@ -325,7 +379,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   imageArticle: {
+    marginTop: 20,
     marginBottom: 20,
+    width: '100%',
+    height: 300,
+    resizeMode: 'contain',
   },
   modalOverlay: {
     position: 'absolute',
@@ -335,4 +393,40 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  buttonTooltip: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    width: '100%',
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonCloseTooltip: {
+    backgroundColor: "#50C7F8",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });

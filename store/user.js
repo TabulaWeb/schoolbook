@@ -8,12 +8,12 @@ class UserStore {
     makeAutoObservable(this);
   }
 
-  checkUserPay(value) {
-    this.userPay = value;
-  }
-
   setUserToken(value) {
     this.userToken = value;
+  }
+
+  setUserPay(value) {
+    this.userPay = value;
   }
 }
 

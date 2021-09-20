@@ -1,10 +1,35 @@
-import React, {useState} from 'react';
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, Pressable, StyleSheet, Linking} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import {svgPhone} from '../../components/svgImage';
+import UserStore from '../../store/user';
 
 const IntroScreen = ({navigation}) => {
-  const [subscription, setSubscription] = useState(true);
+  const [subscription, setSubscription] = useState('');
+
+  const getUrlPay = () => {
+    fetch(
+      `http://194.67.111.21:1337/api/pay/url/?token=${UserStore.userToken}`,
+      {
+        method: 'GET',
+      },
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        setSubscription(json.url);
+        console.log(json);
+      });
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      getUrlPay();
+    });
+
+    return unsubscribe;
+  }, [navigation, subscription]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -26,7 +51,7 @@ const IntroScreen = ({navigation}) => {
 
       <Pressable
         style={styles.subscriptionButton}
-        onPress={() => alert('Click!')}>
+        onPress={() => Linking.openURL(subscription)}>
         <Text style={styles.subscriptionButtonText}>
           Купить полную версию за 499 ₽
         </Text>

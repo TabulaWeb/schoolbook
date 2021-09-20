@@ -35,16 +35,20 @@ const HomeScreen = observer(({navigation}) => {
       headerLeft: () => <Text />,
       headerRight: () => (
         <View>
-          <Pressable onPress={() => navigation.navigate('SubscriptionScreen')}>
-            <SvgXml xml={svgFlash} />
-          </Pressable>
+          {UserStore.userPay == false ? (
+            <Pressable
+              onPress={() => navigation.navigate('SubscriptionScreen')}>
+              <SvgXml xml={svgFlash} />
+            </Pressable>
+          ) : (
+            <Text />
+          )}
         </View>
       ),
     });
   }, [navigation]);
 
   useEffect(() => {
-    console.log(UserStore.userToken);
     setFilter(GlobalStore.bookData);
     const unsubscribe = navigation.addListener('focus', async () => {
       // console.log(GlobalStore.bookMarkSave);

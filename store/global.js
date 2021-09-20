@@ -1,5 +1,4 @@
 import {makeAutoObservable} from 'mobx';
-import UserStore from './user';
 
 class GlobalStore {
   bookData = [];
@@ -11,7 +10,7 @@ class GlobalStore {
   }
 
   setSaveBookmark() {
-    fetch('http://194.67.116.116:1337/api/sections/', {
+    fetch('http://194.67.111.21:1337/api/sections/', {
       method: 'GET',
     })
       .then(response => {
@@ -22,11 +21,9 @@ class GlobalStore {
       });
   }
 
-  setBookmarks() {
-    fetch(
-      `http://194.67.116.116:1337/api/bookmarks/?token=${UserStore.userToken}`,
-      {
-        method: 'GET',
+  setBookmarks = tokens => {
+    fetch(`http://194.67.111.21:1337/api/bookmarks/?token=${tokens}`, {
+      method: 'GET',
     })
       .then(response => {
         return response.json();
@@ -41,7 +38,7 @@ class GlobalStore {
           });
         });
       });
-  }
+  };
 
   pushBookMark(value) {
     this.bookMarkSave.push(value);

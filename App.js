@@ -16,7 +16,7 @@ import SubscriptionScreen from './screens/SubscruptionScreen';
 const Stack = createNativeStackNavigator();
 
 const getUserToken = () => {
-  fetch('http://194.67.116.116:1337/api/user/', {
+  fetch('http://194.67.111.21:1337/api/user/', {
     method: 'POST',
   })
     .then(response => {
@@ -29,13 +29,26 @@ const getUserToken = () => {
     });
 };
 
+const getUserPay = () => {
+  fetch(
+    `http://194.67.111.21:1337/api/pay/check/?token=${UserStore.userToken}`,
+    {
+      method: 'GET',
+  })
+    .then(response => {
+      return response.json();
+    })
+    .then(json => {
+      UserStore.setUserPay(json.pay);
+    });
+};
+
 const App = () => {
   const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
 
   useEffect(() => {
     // getUserToken();
     GlobalStore.setSaveBookmark();
-    GlobalStore.setBookmarks();
     AsyncStorage.getItem('alreadyLaunched').then(value => {
       if (value == null) {
         AsyncStorage.setItem('alreadyLaunched', 'true');
@@ -48,11 +61,15 @@ const App = () => {
     AsyncStorage.getItem('token').then(value => {
       if (value == null) {
         getUserToken();
+        GlobalStore.setBookmarks(UserStore.userToken);
+        getUserPay();
         AsyncStorage.setItem('token', `${UserStore.userToken}`);
       } else {
         UserStore.setUserToken(value);
+        GlobalStore.setBookmarks(UserStore.userToken);
+        getUserPay();
+        console.log(value);
       }
-      console.log(value);
     });
   }, []);
 
