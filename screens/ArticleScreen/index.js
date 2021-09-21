@@ -54,11 +54,7 @@ const ArticleScreen = observer(({route, navigation}) => {
     });
   };
 
-  React.useLayoutEffect(() => {
-    console.log(123123);
-  }, []);
-
-  // Проверка на наличе в закладках
+  //Проверка на наличе в закладках
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       getBookmarSavekJson();
@@ -72,6 +68,15 @@ const ArticleScreen = observer(({route, navigation}) => {
     return unsubscribe;
   }, [articleKey, chapterId, navigation]);
 
+  // const recheckSaveButton = () => {
+  //   getBookmarSavekJson();
+  //   GlobalStore.bookMarkSave.map(i => {
+  //     if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
+  //       setCheckSaveArticle(true);
+  //     }
+  //   });
+  // };
+
   const toggleModal = useCallback(() => {
     setModalVisible(!isModalVisible);
   });
@@ -83,6 +88,8 @@ const ArticleScreen = observer(({route, navigation}) => {
   const window = useWindowDimensions();
 
   React.useLayoutEffect(() => {
+    getBookmarSavekJson();
+
     navigation.setOptions({
       title: '',
       headerTitleAlign: 'center',
@@ -232,7 +239,14 @@ const ArticleScreen = observer(({route, navigation}) => {
               articleKey: articleKey + 1,
               chapterId: chapterId,
             });
-            getBookmarSavekJson();
+            GlobalStore.bookMarkSave.map(i => {
+              console.log(articleKey);
+              if (i.info.article_id == articleKey + 1 && i.info.section_id == chapterId) {
+                setCheckSaveArticle(true);
+              } else {
+                setCheckSaveArticle(false);
+              }
+            });
           }}>
           <Text style={styles.buttonNextText}>Далее</Text>
         </Pressable>
