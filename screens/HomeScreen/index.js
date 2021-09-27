@@ -33,18 +33,7 @@ const HomeScreen = observer(({navigation}) => {
         borderBottomWidth: 0,
       },
       headerLeft: () => <Text />,
-      headerRight: () => (
-        <View>
-          {UserStore.userPay == false ? (
-            <Pressable
-              onPress={() => navigation.navigate('SubscriptionScreen')}>
-              <SvgXml xml={svgFlash} />
-            </Pressable>
-          ) : (
-            <Text />
-          )}
-        </View>
-      ),
+      headerRight: () => <View />,
     });
   }, [navigation]);
 

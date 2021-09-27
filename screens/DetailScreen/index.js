@@ -8,14 +8,20 @@ import {
   Modal,
   Linking,
   TouchableWithoutFeedback,
+  Dimensions,
 } from 'react-native';
 import GlobalStore from '../../store/global';
 import UserStore from '../../store/user';
+const WIDTH = Dimensions.get('window').width;
 
 const DetailScreen = ({route, navigation}) => {
   const {idChapter} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [subscription, setSubscription] = useState('');
+
+  useEffect(() => {
+    GlobalStore.setSectionArticle(idChapter);
+  }, [idChapter]);
 
   const getUrlPay = () => {
     fetch(
@@ -36,13 +42,6 @@ const DetailScreen = ({route, navigation}) => {
   useEffect(() => {
     const getBookmark = navigation.addListener('focus', async () => {
       console.log(UserStore.userPay);
-
-      if (UserStore.userPay == false || UserStore.userPay == undefined) {
-        getUrlPay();
-        if (idChapter > 2) {
-          setModalVisible(!modalVisible);
-        }
-      }
     });
     return getBookmark;
   }, [idChapter, modalVisible, navigation]);
@@ -77,37 +76,15 @@ const DetailScreen = ({route, navigation}) => {
       title: GlobalStore.bookData[idChapter - 1].title,
       headerTitleAlign: 'center',
       headerShadowVisible: false,
+      headerTitleStyle: {
+        width: 10,
+      },
     });
   }, [idChapter, navigation]);
 
   return (
     <View style={styles.container}>
       <ScrollView style={[styles.content, styles.itemsbook]}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          backdropOpacity={0}
-          style={styles.modalContainer}>
-          <TouchableWithoutFeedback
-            onPress={() => navigation.navigate('HomeScreen')}>
-            <View style={styles.modalOverlay} />
-          </TouchableWithoutFeedback>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>
-                В бесплатной версии приложения доступны первые 2 главы.
-              </Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => Linking.openURL(subscription)}>
-                <Text style={styles.textStyle}>
-                  Купить полную версию за 499 ₽{' '}
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
         {GlobalStore.bookData[idChapter - 1].articles.map(i => (
           <View key={i.key}>
             <Pressable

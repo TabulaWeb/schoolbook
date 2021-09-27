@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, Suspense} from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,10 @@ import {
   Image,
   ScrollView,
   Button,
+  FlatList,
   useWindowDimensions,
   TouchableOpacity,
+  ActivityIndicator ,
   TouchableWithoutFeedback,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -27,7 +29,9 @@ import {
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import GlobalStore from '../../store/global';
 import UserStore from '../../store/user';
+// import {lightDeviseDefault} from '../../store/GetLightDevice';
 import {observer} from 'mobx-react';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const ArticleScreen = observer(({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
@@ -37,6 +41,15 @@ const ArticleScreen = observer(({route, navigation}) => {
   const [deleteSaveArticle, setDeleteSave] = useState(null);
   const [tooltip, setTooltip] = useState(false);
   const [textTooltip, setTextTooltip] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useState(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 6000);
+  });
+
+  console.log(isLoading);
 
   const getBookmarSavekJson = async () => {
     const bookMarkDatas = await fetch(
@@ -96,14 +109,14 @@ const ArticleScreen = observer(({route, navigation}) => {
       headerShadowVisible: false,
       headerRight: () => (
         <View style={styles.buttonContent}>
-          <Pressable onPress={() => toggleModal()}>
+          <Pressable onPress={() => toggleModal()} style={{marginRight: 18}}>
             <SvgXml xml={svgButtonText} />
           </Pressable>
-          <Pressable
+          {/* <Pressable
             style={[styles.iconHeader, styles.iconHeaderCenter]}
             onPress={() => toggleModalLight()}>
             <SvgXml xml={svgButtonSun} />
-          </Pressable>
+          </Pressable> */}
           {checkSaveArticle ? (
             <Pressable onPress={() => removeSavedAeticle()}>
               <SvgXml xml={svgHeaderAcriveMark} />
@@ -170,163 +183,171 @@ const ArticleScreen = observer(({route, navigation}) => {
 
   // Slider light
   const [sliderOneChangingLight, setSliderOneChangingLight] = React.useState(false);
-  const [sliderOneValueLight, setSliderOneValueLight] = React.useState([1]);
+  const [sliderOneValueLight, setSliderOneValueLight] = React.useState([0.5]);
   const sliderOneValuesChangeStartLight = () => setSliderOneChangingLight(true);
   const sliderOneValuesChangeLight = values => setSliderOneValueLight(values);
 
   // Add memory
-  let numberLight = 0 + +sliderOneValueLight;
+  // let numberLight = 0 + +sliderOneValueLight;
 
-  DeviceBrightness.setBrightnessLevel(numberLight);
+  // DeviceBrightness.setBrightnessLevel(numberLight);
+  // console.log(GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].detail);
+  const renderItem = ({item}) => {
+    return (
+      <View>
+        <Text style={{fontSize: 16 + +sliderOneValue}}>{item.text}</Text>
+        {item.image !== null ? (
+          <Image
+            style={styles.imageArticle}
+            source={{uri: `http://194.67.111.21:1337${item.image}`}}
+          />
+        ) : (
+          <Text />
+        )}
+      </View>
+    );
+  };
 
   return (
-    <ScrollView style={[styles.container, styles.articleContainer]}>
-      <Text style={[styles.articleTitle, {fontSize: 18 + +sliderOneValue}]}>
-        {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].title}
-      </Text>
-      <View>
-        {GlobalStore.bookData[chapterId - 1].articles[
-          articleKey - 1
-        ].detail.map(i => (
-          <View
-            key={GlobalStore.bookData[chapterId - 1].articles[
-              articleKey - 1
-            ].detail.indexOf(i)}>
-            <View style={{flexDirection: 'row', width:'100%', flexWrap:'wrap'}}>
-              {i.text.split(' ').map(k => (
-               <View>
-                {k == i.word ? (
-                  <Pressable
-                    onPress={() => {
-                        setTooltip(!tooltip);
-                        setTextTooltip(i.additional_text);
-                    }}
-                    style={{marginRight: 6, borderBottomWidth: 1, borderStyle: 'dashed'}}
-                  >
-                    <Text
-                      style={{fontSize: 16 + +sliderOneValue}}
-                    >{k}</Text>
-                  </Pressable>
-                ) : (
-                  <Text style={{marginRight: 6, fontSize: 16 + +sliderOneValue}}>{k}</Text>
-                )}
-                </View>
-                )
-              )}
+    <ScrollView
+      style={[styles.container, styles.articleContainer]}
+      >
+    {isLoading ? (
+      <View style={{marginTop: 20, marginBottom: 20, marginLeft: 0}}>
+        <SkeletonPlaceholder marginTop={20} marginLeft={0}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{ marginLeft: 0,  width: '100%' }}>
+              <View style={{ width: '50%', height: 20, borderRadius: 4, marginBottom: 25 }} />
+              <View style={{ marginTop: 0, width: '100%', height: 60, borderRadius: 4 }}/>
+              <View style={{ marginTop: 20, width: '100%', height: 150, borderRadius: 4 }}/>
+              <View style={{ marginTop: 20, width: '100%', height: 50, borderRadius: 4 }}/>
+              <View style={{ marginTop: 20, width: '100%', height: 80, borderRadius: 4 }}/>
+              <View style={{ marginTop: 20, width: '100%', height: 100, borderRadius: 4 }}/>
+              <View style={{ marginTop: 20, width: '100%', height: 120, borderRadius: 4 }}/>
+             
             </View>
-            {i.image !== null ? (
-              <Image
-                style={styles.imageArticle}
-                source={{uri: `http://194.67.111.21:1337${i.image}`}}
+        </View>
+      </SkeletonPlaceholder>
+     </View>
+    ) : (
+        <>
+        <Text style={[styles.articleTitle, {fontSize: 18 + +sliderOneValue}]}>
+          {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].title}
+        </Text>
+        <View>
+        <FlatList
+            data={
+              GlobalStore.bookData[chapterId - 1].articles[articleKey - 1]
+                .detail
+            }
+              renderItem={renderItem}
+              onEndReachedThreshold={0.1}
+          />
+        </View>
+        {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
+          <Pressable 
+            style={styles.buttonNext}
+            onPress={() => navigation.navigate('HomeScreen')}>
+            <Text style={styles.buttonNextText}>Завершить</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={styles.buttonNext}
+            onPress={() => {
+              navigation.navigate('ArticleScreen', {
+                articleKey: articleKey + 1,
+                chapterId: chapterId,
+              });
+              GlobalStore.bookMarkSave.map(i => {
+                console.log(articleKey);
+                if (i.info.article_id == articleKey + 1 && i.info.section_id == chapterId) {
+                  setCheckSaveArticle(true);
+                } else {
+                  setCheckSaveArticle(false);
+                }
+              });
+            }}>
+            <Text style={styles.buttonNextText}>Далее</Text>
+          </Pressable>
+        )}
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={tooltip}
+          style={styles.modalContainerTooltip}>
+          <TouchableWithoutFeedback onPress={() => setTooltip(!tooltip)}>
+            <View style={styles.modalOverlay} />
+          </TouchableWithoutFeedback>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{textTooltip}</Text>
+              <Pressable
+                style={[styles.buttonTooltip, styles.buttonCloseTooltip]}
+                onPress={() => setTooltip(!tooltip)}>
+                <Text style={styles.textStyle}>Закрыть</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          isVisible={isModalVisible}
+          backdropOpacity={0}
+          swipeDirection="down"
+          style={styles.modalContainer}>
+          <TouchableWithoutFeedback onPress={toggleModal}>
+            <View style={styles.modalOverlay} />
+          </TouchableWithoutFeedback>
+          <View style={styles.modalContent}>
+            <View style={styles.containerLight}>
+              <View style={[styles.smalLight, styles.svgLight]}>
+                <SvgXml xml={svgSmallText} />
+              </View>
+              <MultiSlider
+                values={sliderOneValue}
+                stepsAs={[2, 4, 8, 10]}
+                sliderLength={window.width - 100}
+                onValuesChangeStart={sliderOneValuesChangeStart}
+                onValuesChange={sliderOneValuesChange}
               />
-            ) : (
-              <Text />
-            )}
+              <View style={[styles.bigLight, styles.svgLight]}>
+                <SvgXml xml={svgBigText} />
+              </View>
+            </View>
           </View>
-        ))}
-      </View>
-      {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
-        <Pressable 
-          style={styles.buttonNext}
-          onPress={() => navigation.navigate('HomeScreen')}>
-          <Text style={styles.buttonNextText}>Завершить</Text>
-        </Pressable>
-      ) : (
-        <Pressable
-          style={styles.buttonNext}
-          onPress={() => {
-            navigation.navigate('ArticleScreen', {
-              articleKey: articleKey + 1,
-              chapterId: chapterId,
-            });
-            GlobalStore.bookMarkSave.map(i => {
-              console.log(articleKey);
-              if (i.info.article_id == articleKey + 1 && i.info.section_id == chapterId) {
-                setCheckSaveArticle(true);
-              } else {
-                setCheckSaveArticle(false);
-              }
-            });
-          }}>
-          <Text style={styles.buttonNextText}>Далее</Text>
-        </Pressable>
-      )}
+        </Modal>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={tooltip}
-        style={styles.modalContainerTooltip}>
-        <TouchableWithoutFeedback onPress={() => setTooltip(!tooltip)}>
-          <View style={styles.modalOverlay} />
-        </TouchableWithoutFeedback>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>{textTooltip}</Text>
-            <Pressable
-              style={[styles.buttonTooltip, styles.buttonCloseTooltip]}
-              onPress={() => setTooltip(!tooltip)}>
-              <Text style={styles.textStyle}>Закрыть</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        isVisible={isModalVisible}
-        backdropOpacity={0}
-        swipeDirection="down"
-        style={styles.modalContainer}>
-        <TouchableWithoutFeedback onPress={toggleModal}>
-          <View style={styles.modalOverlay} />
-        </TouchableWithoutFeedback>
-        <View style={styles.modalContent}>
-          <View style={styles.containerLight}>
-            <View style={[styles.smalLight, styles.svgLight]}>
-              <SvgXml xml={svgSmallText} />
-            </View>
-            <MultiSlider
-              values={sliderOneValue}
-              stepsAs={[2, 4, 8, 10]}
-              sliderLength={window.width - 100}
-              onValuesChangeStart={sliderOneValuesChangeStart}
-              onValuesChange={sliderOneValuesChange}
-            />
-            <View style={[styles.bigLight, styles.svgLight]}>
-              <SvgXml xml={svgBigText} />
+        <Modal
+          isVisible={isModalVisibleLight}
+          backdropOpacity={0}
+          swipeDirection="down"
+          style={styles.modalContainer}>
+          <TouchableWithoutFeedback onPress={toggleModalLight}>
+            <View style={styles.modalOverlay} />
+          </TouchableWithoutFeedback>
+          <View style={styles.modalContent}>
+            <View style={styles.containerLight}>
+              <View style={[styles.smalLight, styles.svgLight]}>
+                <SvgXml xml={svgSmallLight} />
+              </View>
+              <MultiSlider
+                values={sliderOneValueLight}
+                min={0}
+                max={1}
+                step={0.1}
+                sliderLength={window.width - 100}
+                onValuesChangeStart={sliderOneValuesChangeStartLight}
+                onValuesChange={sliderOneValuesChangeLight}
+              />
+              <View style={[styles.bigLight, styles.svgLight]}>
+                <SvgXml xml={svgBigLight} />
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-
-      <Modal
-        isVisible={isModalVisibleLight}
-        backdropOpacity={0}
-        swipeDirection="down"
-        style={styles.modalContainer}>
-        <TouchableWithoutFeedback onPress={toggleModalLight}>
-          <View style={styles.modalOverlay} />
-        </TouchableWithoutFeedback>
-        <View style={styles.modalContent}>
-          <View style={styles.containerLight}>
-            <View style={[styles.smalLight, styles.svgLight]}>
-              <SvgXml xml={svgSmallLight} />
-            </View>
-            <MultiSlider
-              values={sliderOneValueLight}
-              min={0}
-              max={1}
-              step={0.1}
-              sliderLength={window.width - 100}
-              onValuesChangeStart={sliderOneValuesChangeStartLight}
-              onValuesChange={sliderOneValuesChangeLight}
-            />
-            <View style={[styles.bigLight, styles.svgLight]}>
-              <SvgXml xml={svgBigLight} />
-            </View>
-          </View>
-        </View>
-      </Modal>
+        </Modal>
+      </>
+    )}
     </ScrollView>
   );
 });

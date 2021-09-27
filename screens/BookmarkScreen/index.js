@@ -30,13 +30,13 @@ const BookmarkScreen = observer(({navigation}) => {
     React.useCallback(() => {
       const getSaveBookmark = navigation.addListener('focus', async () => {
         await setBookmarkContent(GlobalStore.bookMarkSave);
-        console.log(bookmarkContent);
       });
       return getSaveBookmark;
     }, [bookmarkContent, navigation]),
   );
 
-  // console.log(bookmarkContent);
+  // console.log(bookmarkContent[0].info);
+  console.log(GlobalStore.bookData);
 
   return (
     <ScrollView style={styles.container}>

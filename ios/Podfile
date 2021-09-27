@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-target 'schoolbook' do
+target 'biophysicsbook' do
   config = use_native_modules!
 
   use_react_native!(
@@ -20,7 +20,9 @@ target 'schoolbook' do
 
   pod 'react-native-network-info', :path => '../node_modules/react-native-network-info'
 
-  target 'schoolbookTests' do
+  pod 'RNIap', :path => '../node_modules/react-native-iap'
+
+  target 'biophysicsbookTests' do
     inherit! :complete
     # Pods for testing
   end

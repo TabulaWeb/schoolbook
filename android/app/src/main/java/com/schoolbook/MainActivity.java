@@ -1,4 +1,4 @@
-package com.schoolbook;
+package com.biophysicsbook;
 
 import android.content.Intent;
 import com.facebook.react.ReactActivity;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "schoolbook";
+    return "biophysicsbook";
   }
 
   @Override

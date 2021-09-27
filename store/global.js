@@ -2,8 +2,8 @@ import {makeAutoObservable} from 'mobx';
 
 class GlobalStore {
   bookData = [];
-
   bookMarkSave = [];
+  sectionArticle = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -37,6 +37,18 @@ class GlobalStore {
             },
           });
         });
+      });
+  };
+
+  setSectionArticle = idSection => {
+    fetch(`http://194.67.111.21:1337/api/section/${idSection}`, {
+      method: 'GET',
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        this.sectionArticle = json;
       });
   };
 

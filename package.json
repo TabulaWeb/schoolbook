@@ -1,5 +1,5 @@
 {
-  "name": "schoolbook",
+  "name": "biophysicsbook",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -14,6 +14,7 @@
     "@babel/plugin-proposal-decorators": "^7.15.4",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-async-storage/async-storage": "^1.15.7",
+    "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
     "lottie-react-native": "^4.0.3",
@@ -23,20 +24,27 @@
     "mobx-react-devtools": "^6.1.1",
     "mobx-react-lite": "^3.2.1",
     "react": "17.0.2",
+    "react-lazyload": "^3.2.0",
     "react-native": "0.65.1",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-elements": "^3.4.2",
     "react-native-extra-dimensions-android": "^1.2.5",
+    "react-native-iap": "^7.5.0",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-image-zoom-viewer": "^3.0.1",
+    "react-native-lazyload": "^1.1.0",
+    "react-native-lazyload-deux": "^2.0.4",
+    "react-native-linear-gradient": "^2.5.6",
     "react-native-modal": "^13.0.0",
     "react-native-network-info": "^5.2.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.6.0",
+    "react-native-skeleton-placeholder": "^5.0.0",
     "react-native-slider-intro": "^1.0.21",
     "react-native-svg": "^12.1.1",
     "react-native-vector-icons": "^8.1.0",
-    "react-navigation-header-buttons": "^7.0.2"
+    "react-navigation-header-buttons": "^7.0.2",
+    "save": "^2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
