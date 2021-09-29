@@ -29,20 +29,6 @@ const getUserToken = () => {
     });
 };
 
-const getUserPay = () => {
-  fetch(
-    `http://194.67.111.21:1337/api/pay/check/?token=${UserStore.userToken}`,
-    {
-      method: 'GET',
-  })
-    .then(response => {
-      return response.json();
-    })
-    .then(json => {
-      UserStore.setUserPay(json.pay);
-    });
-};
-
 const App = () => {
   const [isFirstLaunch, setIsFeerstLaunch] = useState(null);
 

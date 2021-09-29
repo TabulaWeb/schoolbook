@@ -32,33 +32,31 @@ const BookmarkScreen = observer(({navigation}) => {
         await setBookmarkContent(GlobalStore.bookMarkSave);
       });
       return getSaveBookmark;
-    }, [bookmarkContent, navigation]),
+    }, [navigation]),
   );
 
   // console.log(bookmarkContent[0].info);
-  console.log(GlobalStore.bookData);
+  // console.log(GlobalStore.bookMarkSave[0]);
 
   return (
     <ScrollView style={styles.container}>
       {bookmarkContent.map((i, k) => (
         <View style={styles.bookmarkContainer} key={bookmarkContent.indexOf(i)}>
-          <Pressable
-            style={styles.itembook}
-            onPress={() =>
-              navigation.navigate('ArticleScreen', {
-                articleKey: i.info.article_id,
-                chapterId: i.info.section_id,
-              })
-            }>
-            <Text style={styles.itembookNumber}>{k + 1}</Text>
-            <Text style={styles.itembookTitle}>
-              {
-                GlobalStore.bookData[i.info.section_id - 1].articles[
-                  i.info.article_id - 1
-                ].title
-              }
-            </Text>
-          </Pressable>
+          {GlobalStore.bookData[i.info.section_id - 1].articles.map(
+            (p, q) => (p.id == i.info.article_id ? (
+              <Pressable
+                style={styles.itembook}
+                onPress={() =>
+                  navigation.navigate('ArticleScreen', {
+                    articleKey: q+1,
+                    chapterId: i.info.section_id,
+                  })
+                }>
+                <Text style={styles.itembookNumber}>{k + 1}</Text>
+                <Text style={styles.itembookTitle}>{p.title}</Text>
+              </Pressable>
+            ) : null),
+          )}
         </View>
       ))}
     </ScrollView>

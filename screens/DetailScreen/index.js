@@ -72,6 +72,7 @@ const DetailScreen = ({route, navigation}) => {
   // }, [idChapter, payStatus]);
 
   React.useLayoutEffect(() => {
+    // console.log(GlobalStore.bookMarkSave[0]);
     navigation.setOptions({
       title: GlobalStore.bookData[idChapter - 1].title,
       headerTitleAlign: 'center',
@@ -81,6 +82,16 @@ const DetailScreen = ({route, navigation}) => {
       },
     });
   }, [idChapter, navigation]);
+
+  useEffect(() => {
+    GlobalStore.bookMarkSave.map(i => {
+      GlobalStore.bookData[i.info.section_id - 1].articles.map((p, k) => {
+        if (p.id == i.info.article_id) {
+          console.log(`Итоговый индекс массива ${k}`);
+        }
+      });
+    });
+  }, []);
 
   return (
     <View style={styles.container}>

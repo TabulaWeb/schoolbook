@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, Suspense} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,19 +6,14 @@ import {
   Pressable,
   Image,
   ScrollView,
-  Button,
   FlatList,
   useWindowDimensions,
-  TouchableOpacity,
-  ActivityIndicator ,
   TouchableWithoutFeedback,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import {SvgXml} from 'react-native-svg';
 import {
   svgButtonText,
-  svgButtonSun,
   svgHeaderAcriveMark,
   svgHeaderAnactiveMark,
   svgSmallText,
@@ -31,7 +26,7 @@ import GlobalStore from '../../store/global';
 import UserStore from '../../store/user';
 // import {lightDeviseDefault} from '../../store/GetLightDevice';
 import {observer} from 'mobx-react';
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 const ArticleScreen = observer(({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
@@ -72,9 +67,11 @@ const ArticleScreen = observer(({route, navigation}) => {
     const unsubscribe = navigation.addListener('focus', async () => {
       getBookmarSavekJson();
       GlobalStore.bookMarkSave.map(i => {
-        if (i.info.article_id == articleKey && i.info.section_id == chapterId) {
-          setCheckSaveArticle(true);
-        }
+        GlobalStore.bookData[i.info.section_id - 1].articles.map((p, k) => {
+          if (k == articleKey && i.info.section_id == chapterId) {
+            setCheckSaveArticle(true);
+          }
+        });
       });
     });
 
@@ -150,7 +147,11 @@ const ArticleScreen = observer(({route, navigation}) => {
         // console.log(json);
       });
     GlobalStore.pushBookMark({
-      info: {section_id: chapterId, article_id: articleKey},
+      info: {
+        section_id: chapterId,
+        article_id:
+          GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].id,
+      },
     });
     setCheckSaveArticle(true);
   }
@@ -209,145 +210,194 @@ const ArticleScreen = observer(({route, navigation}) => {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, styles.articleContainer]}
-      >
-    {isLoading ? (
-      <View style={{marginTop: 20, marginBottom: 20, marginLeft: 0}}>
-        <SkeletonPlaceholder marginTop={20} marginLeft={0}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View style={{ marginLeft: 0,  width: '100%' }}>
-              <View style={{ width: '50%', height: 20, borderRadius: 4, marginBottom: 25 }} />
-              <View style={{ marginTop: 0, width: '100%', height: 60, borderRadius: 4 }}/>
-              <View style={{ marginTop: 20, width: '100%', height: 150, borderRadius: 4 }}/>
-              <View style={{ marginTop: 20, width: '100%', height: 50, borderRadius: 4 }}/>
-              <View style={{ marginTop: 20, width: '100%', height: 80, borderRadius: 4 }}/>
-              <View style={{ marginTop: 20, width: '100%', height: 100, borderRadius: 4 }}/>
-              <View style={{ marginTop: 20, width: '100%', height: 120, borderRadius: 4 }}/>
-             
+    <ScrollView style={[styles.container, styles.articleContainer]}>
+      {isLoading ? (
+        <View style={{marginTop: 20, marginBottom: 20, marginLeft: 0}}>
+          <SkeletonPlaceholder marginTop={20} marginLeft={0}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={{ marginLeft: 0,  width: '100%' }}>
+                <View
+                  style={{
+                    width: '50%',
+                    height: 20,
+                    borderRadius: 4,
+                    marginBottom: 25,
+                  }}
+                />
+                <View
+                  style={{
+                    marginTop: 0,
+                    width: '100%',
+                    height: 60,
+                    borderRadius: 4,
+                  }}
+                />
+                <View
+                  style={{
+                    marginTop: 20,
+                    width: '100%',
+                    height: 150,
+                    borderRadius: 4,
+                  }}
+                />
+                <View
+                  style={{
+                    marginTop: 20,
+                    width: '100%',
+                    height: 50,
+                    borderRadius: 4,
+                  }}
+                />
+                <View
+                  style={{
+                    marginTop: 20,
+                    width: '100%',
+                    height: 80,
+                    borderRadius: 4,
+                  }}
+                />
+                <View
+                  style={{
+                    marginTop: 20,
+                    width: '100%',
+                    height: 100,
+                    borderRadius: 4,
+                  }}
+                />
+                <View
+                  style={{
+                    marginTop: 20,
+                    width: '100%',
+                    height: 120,
+                    borderRadius: 4,
+                  }}
+                />
+              </View>
             </View>
+          </SkeletonPlaceholder>
         </View>
-      </SkeletonPlaceholder>
-     </View>
-    ) : (
+      ) : (
         <>
-        <Text style={[styles.articleTitle, {fontSize: 18 + +sliderOneValue}]}>
-          {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].title}
-        </Text>
-        <View>
-        <FlatList
-            data={
-              GlobalStore.bookData[chapterId - 1].articles[articleKey - 1]
-                .detail
-            }
+          <Text style={[styles.articleTitle, {fontSize: 18 + +sliderOneValue}]}>
+            {GlobalStore.bookData[chapterId - 1].articles[articleKey - 1].title}
+          </Text>
+          <View>
+            <FlatList
+              data={
+                GlobalStore.bookData[chapterId - 1].articles[articleKey - 1]
+                  .detail
+              }
               renderItem={renderItem}
               onEndReachedThreshold={0.1}
-          />
-        </View>
-        {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
-          <Pressable 
-            style={styles.buttonNext}
-            onPress={() => navigation.navigate('HomeScreen')}>
-            <Text style={styles.buttonNextText}>Завершить</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            style={styles.buttonNext}
-            onPress={() => {
-              navigation.navigate('ArticleScreen', {
-                articleKey: articleKey + 1,
-                chapterId: chapterId,
-              });
-              GlobalStore.bookMarkSave.map(i => {
-                console.log(articleKey);
-                if (i.info.article_id == articleKey + 1 && i.info.section_id == chapterId) {
-                  setCheckSaveArticle(true);
-                } else {
-                  setCheckSaveArticle(false);
-                }
-              });
-            }}>
-            <Text style={styles.buttonNextText}>Далее</Text>
-          </Pressable>
-        )}
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={tooltip}
-          style={styles.modalContainerTooltip}>
-          <TouchableWithoutFeedback onPress={() => setTooltip(!tooltip)}>
-            <View style={styles.modalOverlay} />
-          </TouchableWithoutFeedback>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{textTooltip}</Text>
-              <Pressable
-                style={[styles.buttonTooltip, styles.buttonCloseTooltip]}
-                onPress={() => setTooltip(!tooltip)}>
-                <Text style={styles.textStyle}>Закрыть</Text>
-              </Pressable>
-            </View>
+            />
           </View>
-        </Modal>
+          {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
+            <Pressable 
+              style={styles.buttonNext}
+              onPress={() => navigation.navigate('HomeScreen')}>
+              <Text style={styles.buttonNextText}>Завершить</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              style={styles.buttonNext}
+              onPress={() => {
+                navigation.navigate('ArticleScreen', {
+                  articleKey: articleKey + 1,
+                  chapterId: chapterId,
+                });
+                GlobalStore.bookMarkSave.map(i => {
+                  console.log(articleKey);
+                  if (
+                    i.info.article_id == articleKey + 1 &&
+                    i.info.section_id == chapterId
+                  ) {
+                    setCheckSaveArticle(true);
+                  } else {
+                    setCheckSaveArticle(false);
+                  }
+                });
+              }}>
+              <Text style={styles.buttonNextText}>Далее</Text>
+            </Pressable>
+          )}
 
-        <Modal
-          isVisible={isModalVisible}
-          backdropOpacity={0}
-          swipeDirection="down"
-          style={styles.modalContainer}>
-          <TouchableWithoutFeedback onPress={toggleModal}>
-            <View style={styles.modalOverlay} />
-          </TouchableWithoutFeedback>
-          <View style={styles.modalContent}>
-            <View style={styles.containerLight}>
-              <View style={[styles.smalLight, styles.svgLight]}>
-                <SvgXml xml={svgSmallText} />
-              </View>
-              <MultiSlider
-                values={sliderOneValue}
-                stepsAs={[2, 4, 8, 10]}
-                sliderLength={window.width - 100}
-                onValuesChangeStart={sliderOneValuesChangeStart}
-                onValuesChange={sliderOneValuesChange}
-              />
-              <View style={[styles.bigLight, styles.svgLight]}>
-                <SvgXml xml={svgBigText} />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={tooltip}
+            style={styles.modalContainerTooltip}>
+            <TouchableWithoutFeedback onPress={() => setTooltip(!tooltip)}>
+              <View style={styles.modalOverlay} />
+            </TouchableWithoutFeedback>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>{textTooltip}</Text>
+                <Pressable
+                  style={[styles.buttonTooltip, styles.buttonCloseTooltip]}
+                  onPress={() => setTooltip(!tooltip)}>
+                  <Text style={styles.textStyle}>Закрыть</Text>
+                </Pressable>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
 
-        <Modal
-          isVisible={isModalVisibleLight}
-          backdropOpacity={0}
-          swipeDirection="down"
-          style={styles.modalContainer}>
-          <TouchableWithoutFeedback onPress={toggleModalLight}>
-            <View style={styles.modalOverlay} />
-          </TouchableWithoutFeedback>
-          <View style={styles.modalContent}>
-            <View style={styles.containerLight}>
-              <View style={[styles.smalLight, styles.svgLight]}>
-                <SvgXml xml={svgSmallLight} />
-              </View>
-              <MultiSlider
-                values={sliderOneValueLight}
-                min={0}
-                max={1}
-                step={0.1}
-                sliderLength={window.width - 100}
-                onValuesChangeStart={sliderOneValuesChangeStartLight}
-                onValuesChange={sliderOneValuesChangeLight}
-              />
-              <View style={[styles.bigLight, styles.svgLight]}>
-                <SvgXml xml={svgBigLight} />
+          <Modal
+            isVisible={isModalVisible}
+            backdropOpacity={0}
+            swipeDirection="down"
+            style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={toggleModal}>
+              <View style={styles.modalOverlay} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <View style={styles.containerLight}>
+                <View style={[styles.smalLight, styles.svgLight]}>
+                  <SvgXml xml={svgSmallText} />
+                </View>
+                <MultiSlider
+                  values={sliderOneValue}
+                  stepsAs={[2, 4, 8, 10]}
+                  sliderLength={window.width - 100}
+                  onValuesChangeStart={sliderOneValuesChangeStart}
+                  onValuesChange={sliderOneValuesChange}
+                />
+                <View style={[styles.bigLight, styles.svgLight]}>
+                  <SvgXml xml={svgBigText} />
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </>
-    )}
+          </Modal>
+
+          <Modal
+            isVisible={isModalVisibleLight}
+            backdropOpacity={0}
+            swipeDirection="down"
+            style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={toggleModalLight}>
+              <View style={styles.modalOverlay} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <View style={styles.containerLight}>
+                <View style={[styles.smalLight, styles.svgLight]}>
+                  <SvgXml xml={svgSmallLight} />
+                </View>
+                <MultiSlider
+                  values={sliderOneValueLight}
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  sliderLength={window.width - 100}
+                  onValuesChangeStart={sliderOneValuesChangeStartLight}
+                  onValuesChange={sliderOneValuesChangeLight}
+                />
+                <View style={[styles.bigLight, styles.svgLight]}>
+                  <SvgXml xml={svgBigLight} />
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </>
+      )}
     </ScrollView>
   );
 });
@@ -430,18 +480,18 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 12,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   buttonTooltip: {
     borderRadius: 20,
@@ -450,18 +500,18 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonOpen: {
-    backgroundColor: "#F194FF",
+    backgroundColor: '#F194FF',
   },
   buttonCloseTooltip: {
-    backgroundColor: "#50C7F8",
+    backgroundColor: '#50C7F8',
   },
   textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
-  }
+    textAlign: 'center',
+  },
 });
