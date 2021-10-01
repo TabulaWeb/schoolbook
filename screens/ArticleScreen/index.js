@@ -41,7 +41,7 @@ const ArticleScreen = observer(({route, navigation}) => {
   useState(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 1);
   });
 
   console.log(isLoading);
@@ -196,7 +196,26 @@ const ArticleScreen = observer(({route, navigation}) => {
   const renderItem = ({item}) => {
     return (
       <View>
-        <Text style={{fontSize: 16 + +sliderOneValue}}>{item.text}</Text>
+        <View style={{flexDirection: 'row', width: '100%', flexWrap: 'wrap'}}>
+          {item.text.split(' ').map(k => (
+            <View>
+              {k == item.word ? (
+                <Pressable
+                  onPress={() => {
+                    setTooltip(!tooltip);
+                    setTextTooltip(item.additional_text);
+                  }}
+                  style={{marginRight: 6, borderBottomWidth: 1, borderStyle: 'dashed'}}>
+                  <Text style={{fontSize: 16 + +sliderOneValue}}>{k}</Text>
+                </Pressable>
+              ) : (
+                <Text style={{marginRight: 6, fontSize: 16 + +sliderOneValue}}>
+                  {k}
+                </Text>
+              )}
+            </View>
+          ))}
+        </View>
         {item.image !== null ? (
           <Image
             style={styles.imageArticle}
