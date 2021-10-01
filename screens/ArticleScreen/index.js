@@ -41,7 +41,7 @@ const ArticleScreen = observer(({route, navigation}) => {
   useState(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 6000);
+    }, 1000);
   });
 
   console.log(isLoading);
