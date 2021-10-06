@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    marginBottom: 20,
+    // paddingBottom: 100,
   },
   searchbar: {
     backgroundColor: null,
@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
   },
   itemsbook: {
     paddingLeft: 20,
+    marginBottom: '17%',
   },
   itembook: {
     paddingTop: 15,

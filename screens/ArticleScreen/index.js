@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ import UserStore from '../../store/user';
 // import {lightDeviseDefault} from '../../store/GetLightDevice';
 import {observer} from 'mobx-react';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {useScrollToTop} from '@react-navigation/native';
 
 const ArticleScreen = observer(({route, navigation}) => {
   const {articleKey, chapterId} = route.params;
@@ -37,6 +38,8 @@ const ArticleScreen = observer(({route, navigation}) => {
   const [tooltip, setTooltip] = useState(false);
   const [textTooltip, setTextTooltip] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const inputEl = React.useRef(null);
 
   useState(() => {
     setTimeout(() => {
@@ -229,7 +232,9 @@ const ArticleScreen = observer(({route, navigation}) => {
   };
 
   return (
-    <ScrollView style={[styles.container, styles.articleContainer]}>
+    <ScrollView
+      style={[styles.container, styles.articleContainer]}
+      ref={inputEl}>
       {isLoading ? (
         <View style={{marginTop: 20, marginBottom: 20, marginLeft: 0}}>
           <SkeletonPlaceholder marginTop={20} marginLeft={0}>
@@ -311,33 +316,45 @@ const ArticleScreen = observer(({route, navigation}) => {
             />
           </View>
           {GlobalStore.bookData[chapterId - 1].articles.length == articleKey ? (
-            <Pressable 
-              style={styles.buttonNext}
+            <Pressable
+              style={[styles.buttonNext, {backgroundColor: '#387EA6', borderWidth: 0,}]}
               onPress={() => navigation.navigate('HomeScreen')}>
-              <Text style={styles.buttonNextText}>Завершить</Text>
+              <Text style={[styles.buttonNextText, {color: 'white'}]}>Завершить</Text>
             </Pressable>
           ) : (
-            <Pressable
-              style={styles.buttonNext}
-              onPress={() => {
-                navigation.navigate('ArticleScreen', {
-                  articleKey: articleKey + 1,
-                  chapterId: chapterId,
-                });
-                GlobalStore.bookMarkSave.map(i => {
-                  console.log(articleKey);
-                  if (
-                    i.info.article_id == articleKey + 1 &&
-                    i.info.section_id == chapterId
-                  ) {
-                    setCheckSaveArticle(true);
-                  } else {
-                    setCheckSaveArticle(false);
-                  }
-                });
-              }}>
-              <Text style={styles.buttonNextText}>Далее</Text>
-            </Pressable>
+            <View>
+              <Pressable
+                style={[styles.buttonNext, {backgroundColor: '#387EA6', borderWidth: 0,}]}
+                onPress={() => {
+                  navigation.navigate('ArticleScreen', {
+                    articleKey: articleKey + 1,
+                    chapterId: chapterId,
+                  });
+                  inputEl.current.scrollTo(0);
+                  GlobalStore.bookMarkSave.map(i => {
+                    console.log(articleKey);
+                    if (
+                      i.info.article_id == articleKey + 1 &&
+                      i.info.section_id == chapterId
+                    ) {
+                      setCheckSaveArticle(true);
+                    } else {
+                      setCheckSaveArticle(false);
+                    }
+                  });
+                }}>
+                <Text style={[styles.buttonNextText, {color: 'white'}]}>Далее</Text>
+              </Pressable>
+              <Pressable
+                style={styles.buttonNext}
+                onPress={() =>
+                  navigation.navigate('DetailScreen', {
+                    idChapter: chapterId,
+                  })
+                }>
+                <Text style={styles.buttonNextText}>В оглавление</Text>
+              </Pressable>
+            </View>
           )}
 
           <Modal
